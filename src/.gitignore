@@ -1,2 +1,6 @@
-node_modules
+# 1. Dependency Directory
+/node_modules
+
+# 2. Environment Variables
 .env
+.env.*
