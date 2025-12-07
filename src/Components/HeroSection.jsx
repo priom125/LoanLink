@@ -11,8 +11,8 @@ const HeroSection = () => {
   return (
     <div className="min-h-screen  flex items-center justify-center p-4 sm:p-8 mb-20">
             {/* Hero Banner Section */}
-            <section className="w-full max-w-full">
-                <div className="bg-gray-900 shadow-2xl shadow-black/50 rounded-3xl overflow-hidden transition-all duration-500 transform hover:shadow-3xl">
+            <section className="max-w-full">
+                <div className=" shadow-2xl shadow-black/50 rounded-3xl overflow-hidden transition-all duration-500 transform hover:shadow-3xl">
                     <div className="lg:grid lg:grid-cols-2 lg:gap-0 items-stretch">
 
                         {/* Descriptive Text and CTA - Dark Panel */}

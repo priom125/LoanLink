@@ -2,8 +2,8 @@ import React from 'react'
 
 function Contact() {
   return (
-   <div className="min-h-screen flex items-center justify-center p-4">
-      <div className="max-w-6xl w-full bg-[#04050a] shadow-2xl rounded-xl p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-12">
+   <div className="flex items-center justify-center max-w-full p-10 sm:p-8">
+      <div className="max-w-full bg-[#04050a] shadow-2xl rounded-xl p-8 md:p-12 lg:p-16 flex flex-col lg:flex-row space-y-8 lg:space-y-0 lg:space-x-12">
         
         {/* Contact Form Section */}
         <div className="lg:w-1/2">
@@ -61,20 +61,20 @@ function Contact() {
         </div>
 
         {/* Contact Info/Details Section */}
-        <div className="lg:w-1/2 bg-gray-400 p-8 rounded-lg shadow-inner">
-          <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+        <div className="lg:w-1/2 bg-gray-900 p-8 rounded-lg shadow-inner">
+          <h3 className="text-2xl font-semibold text-white mb-6">
             Our Information 🗺️
           </h3>
           <div className="space-y-4 text-gray-700">
             <p>
               <strong className="block text-indigo-600">Email:</strong>
-              <a href="mailto:info@yourcompany.com" className="hover:underline">laonlink@gmail.com</a>
+              <a href="mailto:info@yourcompany.com" className="hover:underline text-white">laonlink@gmail.com</a>
             </p>
             <p>
               <strong className="block text-indigo-600">Phone:</strong>
-              <a href="tel:+1234567890" className="hover:underline">0124696565</a>
+              <a href="tel:+1234567890" className="hover:underline text-white">0124696565</a>
             </p>
-            <p>
+            <p className='text-white'>
               <strong className="block text-indigo-600">Address:</strong>
               123 Sabbir Lane, Suite 456, Masdair city, TS 78901
             </p>

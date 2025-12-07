@@ -12,7 +12,7 @@ function Home() {
   const loanCategories = useLoaderData();
   // console.log(loanCategories);
   return (
-    <div className="bg-gray-950 min-h-screen pt-8">
+    <div className="bg-gray-950 min-h-screen pt-5">
       <HeroSection/>
       <AllLoanCards loanCategories={loanCategories}/>
       <HowItsWorksSection/>
