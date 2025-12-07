@@ -9,6 +9,8 @@ import Contact from '../Pages/Contact';
 import AuthLayout from '../Layouts/AuthLayout';
 import Login from '../Components/Login';
 import Register from '../Components/Register';
+import ApplyLoanForm from '../Components/ApplyLoanForm';
+import Loading from '../Pages/Loading';
 
 
 
@@ -23,6 +25,10 @@ const router = createBrowserRouter([
         
         index: true,
         element: <Home />,
+        loader: async () => {
+          return fetch('http://localhost:3000/loan-category');
+        },
+        hydrateFallbackElement: <Loading/>,
    
  
       },
@@ -41,6 +47,12 @@ const router = createBrowserRouter([
       {
         path: "/contact",
         element: <Contact />,
+   
+ 
+      },
+      {
+        path: "/apply-loan",
+        element: <ApplyLoanForm />,
    
  
       },
