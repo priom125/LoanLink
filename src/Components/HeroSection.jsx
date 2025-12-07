@@ -9,7 +9,7 @@ const HeroSection = () => {
    
 
   return (
-    <div className="min-h-screen bg-gray-950 flex items-center justify-center p-4 sm:p-8 mb-20">
+    <div className="min-h-screen  flex items-center justify-center p-4 sm:p-8 mb-20">
             {/* Hero Banner Section */}
             <section className="w-full max-w-full">
                 <div className="bg-gray-900 shadow-2xl shadow-black/50 rounded-3xl overflow-hidden transition-all duration-500 transform hover:shadow-3xl">

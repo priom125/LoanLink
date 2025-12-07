@@ -68,7 +68,7 @@ function Contact() {
           <div className="space-y-4 text-gray-700">
             <p>
               <strong className="block text-indigo-600">Email:</strong>
-              <a href="mailto:info@yourcompany.com" className="hover:underline">laonlink.com</a>
+              <a href="mailto:info@yourcompany.com" className="hover:underline">laonlink@gmail.com</a>
             </p>
             <p>
               <strong className="block text-indigo-600">Phone:</strong>
