@@ -1,6 +1,5 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router";
-
 import { AuthContext } from "../Auth/AuthProvider";
 
 function Navbar() {
@@ -16,7 +15,26 @@ function Navbar() {
       });
   };
 
-
+  const renderAvatar = () => {
+    if (user?.photoURL) {
+      return (
+        <img
+          src={user.photoURL}
+          alt={user.displayName || "User avatar"}
+          className="w-8 h-8 rounded-full object-cover"
+        />
+      );
+    }
+    // fallback: initials or placeholder
+    const initial = (user?.displayName || user?.email || "U")
+      .charAt(0)
+      .toUpperCase();
+    return (
+      <div className="w-8 h-8 rounded-full bg-gray-700 text-white flex items-center justify-center font-medium">
+        {initial}
+      </div>
+    );
+  };
 
   return (
     <div className="navbar bg-[#04050a] shadow-sm">
@@ -39,7 +57,7 @@ function Navbar() {
             </svg>
           </div>
           <ul
-            tabIndex="-1"
+            tabIndex={-1}
             className="menu menu-sm dropdown-content rounded-box z-1 mt-3 w-52 p-2"
           >
             <li className="text-white font-semibold">
@@ -51,11 +69,17 @@ function Navbar() {
             <li className="text-white font-semibold">
               <NavLink to="/about-us">About Us</NavLink>
             </li>
+            <li className="text-white font-semibold">
+              <NavLink to="/contact">Contact</NavLink>
+            </li>
+            {user && (
               <li className="text-white font-semibold">
-         <NavLink to="/contact">Contact</NavLink>
-          </li>
+                <NavLink to="/dashboard">Dashboard</NavLink>
+              </li>
+            )}
           </ul>
         </div>
+
         <NavLink to="/" className="font-bold text-white text-2xl">
           Loan<span className="text-[#fb5350]">Link</span>
         </NavLink>
@@ -67,36 +91,48 @@ function Navbar() {
             <NavLink to="/">Home</NavLink>
           </li>
           <li className="text-white font-semibold">
-          <NavLink to="/all-loans">All Loans</NavLink>
+            <NavLink to="/all-loans">All Loans</NavLink>
           </li>
           <li className="text-white font-semibold">
-         <NavLink to="/about-us">About Us</NavLink>
+            <NavLink to="/about-us">About Us</NavLink>
           </li>
           <li className="text-white font-semibold">
-         <NavLink to="/contact">Contact</NavLink>
+            <NavLink to="/contact">Contact</NavLink>
           </li>
+          {user && (
+            <li className="text-white font-semibold">
+              <NavLink to="/dashboard">Dashboard</NavLink>
+            </li>
+          )}
         </ul>
       </div>
 
       <div className="navbar-end">
         {loading ? (
-  
           <div className="w-10 h-10 border-2 border-gray-300 border-t-white rounded-full animate-spin"></div>
-        ) : user ? (
-    
-         <NavLink to="/login">
-            <button className="btn" onClick={handleLogout}>Logout</button>
-          </NavLink>
+        ) : (user && !loading) ? (
+          <div className="flex items-center gap-3">
+
+            <div
+              title={user.displayName || user.email}
+              className="tooltip tooltip-bottom"
+            >
+              {renderAvatar()}
+            </div>
+
+            <button onClick={handleLogout} className="btn ml-2">
+              Logout
+            </button>
+          </div>
         ) : (
-       
-    <div className="flex gap-4">
-          <NavLink to="/login">
-            <button className="btn">Login</button>
-          </NavLink>
-          <NavLink to="/register">
-            <button className="btn">Register</button>
-          </NavLink>
-    </div>
+          <div className="flex gap-4">
+            <NavLink to="/login">
+              <button className="btn">Login</button>
+            </NavLink>
+            <NavLink to="/register">
+              <button className="btn">Register</button>
+            </NavLink>
+          </div>
         )}
       </div>
     </div>

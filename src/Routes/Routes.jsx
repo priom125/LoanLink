@@ -11,6 +11,7 @@ import Login from '../Components/Login';
 import Register from '../Components/Register';
 import ApplyLoanForm from '../Components/ApplyLoanForm';
 import Loading from '../Pages/Loading';
+import DashBoard from '../Pages/DashBoard';
 
 
 
@@ -53,6 +54,12 @@ const router = createBrowserRouter([
       {
         path: "/apply-loan",
         element: <ApplyLoanForm />,
+   
+ 
+      },
+      {
+        path: "/dashboard",
+        element: <DashBoard />,
    
  
       },
