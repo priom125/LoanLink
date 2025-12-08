@@ -49,7 +49,7 @@ function HowItsWorksSection() {
 ];
   return (
      <section className="w-full max-w-7xl py-12 mx-auto px-4 sm:px-6 lg:px-8 mb-20">
-        <h2 className="text-4xl font-extrabold text-white text-center mb-12">
+        <h2 className="text-4xl font-extrabold text-white text-center mb-12 md:text-2xl lg:text-3xl">
             How LoanLink Works (Step-by-step)
         </h2>
 

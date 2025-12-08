@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useForm } from 'react-hook-form';
 import { NavLink } from 'react-router'
 import { LogIn, AtSign, Lock, AlertTriangle, Chrome } from 'lucide-react';
+import { AuthContext } from '../Auth/AuthProvider';
 
 function Login() {
       const { 
@@ -11,6 +12,8 @@ function Login() {
         watch,
         reset 
     } = useForm();
+
+    const {googleLogin,signIn} = useContext(AuthContext);
 
         const [submissionStatus, setSubmissionStatus] = useState(null); 
     const [loading, setLoading] = useState(false);
@@ -23,40 +26,42 @@ function Login() {
         </p>
     );
 
+        const handleGoogleLogin = () => {
+        // Placeholder for Google login logic
+        googleLogin()
+        .then(result => {
+            const user = result.user;
+            console.log("Google user:", user);
+        })
+        .catch(error => {
+            console.error("Google login error:", error);
+        });
+        console.log("Google login clicked");
+    };
+
     // Simulate API call for form submission
     const handleLogin = async (data) => {
-        // setLoading(true);
-        // setSubmissionStatus(null);
+        setLoading(true);
+        setSubmissionStatus(null);
         console.log("Attempting login for:", data.email);
 
-        // try {
-        //     // Simulate a network delay (e.g., 2 seconds)
-        //     await new Promise(resolve => setTimeout(resolve, 2000));
+        try {
+            await signIn(data.email, data.password);
+            console.log("Login successful for:", data.email);
+            setSubmissionStatus('success');
+            reset();
 
-        //     // 🎯 Check against the simulated registered user
-        //     if (data.email === REGISTERED_USER.email && data.password === REGISTERED_USER.password) {
-        //         setSubmissionStatus('success');
-        //         console.log("Login successful!");
-        //         reset(); 
-        //     } else {
-        //         // Throw an error for invalid credentials
-        //         throw new Error("Invalid email or password. Please check your details.");
-        //     }
-        // } catch (error) {
-        //     console.error("Login failed:", error.message);
-        //     setSubmissionStatus('error');
-        // } finally {
-        //     setLoading(false);
-        // }
+            
+        } catch (error) {
+            console.error("Login failed:", error.message);
+            setSubmissionStatus('error');
+        } finally {
+            setLoading(false);
+        }
     };
     
-    // Simulate social login action
-    const handleGoogleLogin = () => {
-        // setSubmissionStatus(null);
-        // console.log("Initiating Google Login...");
-        // // In a real application, this would redirect to Google's OAuth consent screen.
-        // alert("Google Sign-In Initiated (Placeholder)");
-    };
+
+
   return (
 <div className="min-h-screen flex items-center justify-center p-4">
             {/* Dark theme card container */}
@@ -95,7 +100,7 @@ function Login() {
                     disabled={loading}
                     className="w-full flex items-center justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-700 hover:bg-gray-700/80 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4"
                 >
-                    <Chrome className="w-5 h-5 mr-3 text-red-400" />
+             
                     Sign in with Google
                 </button>
 

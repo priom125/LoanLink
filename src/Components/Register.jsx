@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { UserPlus, User, AtSign, Lock, AlertTriangle, Image, Briefcase } from 'lucide-react'; 
 import { NavLink } from 'react-router';
+import { AuthContext } from '../Auth/AuthProvider';
+
 
 function Register() {
    const { 
@@ -10,6 +12,8 @@ function Register() {
         formState: { errors },
         reset 
     } = useForm();
+
+    const {createUser,googleLogin} = useContext(AuthContext);
 
     const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error', or null
     const [loading, setLoading] = useState(false);
@@ -22,6 +26,19 @@ function Register() {
         </p>
     );
 
+    const handleGoogleLogin = () => {
+        // Placeholder for Google login logic
+        googleLogin()
+        .then(result => {
+            const user = result.user;
+            console.log("Google user:", user);
+        })
+        .catch(error => {
+            console.error("Google login error:", error);
+        });
+        console.log("Google login clicked");
+    };
+
 
   const handleRegister = async (data) => {
         setLoading(true);
@@ -29,6 +46,12 @@ function Register() {
         console.log("Attempting registration for:", data.email);
 
         try {
+            const userCredential = await createUser(data.email, data.password);
+            if (userCredential) {
+              const user = userCredential.user;
+              console.log("User created:", user);
+            }
+            setSubmissionStatus('success');
 
             console.log("Registration successful! User Data:", data);
             // reset(); // Keeping data visible for demonstration purposes
@@ -70,6 +93,27 @@ function Register() {
                         <p>An error occurred during registration. Please try again.</p>
                     </div>
                 )}
+
+                         <button
+                    onClick={handleGoogleLogin}
+                    disabled={loading}
+                    className="w-full flex items-center justify-center py-2 px-4 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-700 hover:bg-gray-700/80 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4"
+                >
+                    
+                    Sign in with Google
+                </button>
+
+                {/* OR Divider - Dark Theme adjustments */}
+                <div className="relative mb-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-gray-700"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="px-2 bg-gray-800 text-gray-400">
+                            Or continue with
+                        </span>
+                    </div>
+                </div>
 
                 {/* Registration Form */}
                 <form onSubmit={handleSubmit(handleRegister)} className="space-y-6">
