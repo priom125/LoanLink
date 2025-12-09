@@ -9,8 +9,9 @@ import {
   Image,
   Briefcase,
 } from "lucide-react";
-import { NavLink } from "react-router";
+import { NavLink, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../Auth/AuthProvider";
+import { toast } from "react-toastify";
 
 function Register() {
   const {
@@ -24,6 +25,8 @@ function Register() {
 
   const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error', or null
   const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+  const location = useLocation();
 
   // Helper component for displaying form errors
   const ErrorMessage = ({ message }) => (
@@ -39,9 +42,13 @@ function Register() {
       .then((result) => {
         const user = result.user;
         console.log("Google user:", user);
+       
+        const from = location.state?.from || '/';
+        navigate(from);
       })
       .catch((error) => {
         console.error("Google login error:", error);
+         toast.error("Login Failed. Please try again.");
       });
     console.log("Google login clicked");
   };
@@ -60,11 +67,14 @@ function Register() {
       setSubmissionStatus("success");
 
       console.log("Registration successful! User Data:", data);
-      // reset(); // Keeping data visible for demonstration purposes
+      reset(); 
+      const from = location.state?.from || '/';
+        navigate(from);
     } catch (error) {
       console.error("Registration failed:", error.message);
       // In a real scenario, this would handle server-side errors (e.g., email already exists)
       setSubmissionStatus("error");
+       toast.error("Login Failed. Please try again.");
     } finally {
       setLoading(false);
     }

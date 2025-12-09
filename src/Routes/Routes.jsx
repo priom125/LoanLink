@@ -12,6 +12,8 @@ import Register from '../Components/Register';
 import ApplyLoanForm from '../Components/ApplyLoanForm';
 import Loading from '../Pages/Loading';
 import DashBoard from '../Pages/DashBoard';
+import ViewDetailsPage from '../Pages/ViewDetailsPage';
+import ProtectedRoute from './ProtectedRoutes';
 
 
 
@@ -41,6 +43,14 @@ const router = createBrowserRouter([
         },
         hydrateFallbackElement: <Loading/>,
  
+      },
+      {
+        path: '/loan-details/:id',
+        element:<ProtectedRoute><ViewDetailsPage/></ProtectedRoute>,
+        loader: async ({ params }) => {
+          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          return res.json();
+        }
       },
       {
         path: "/about-us",

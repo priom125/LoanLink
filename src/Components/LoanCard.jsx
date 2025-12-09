@@ -29,7 +29,7 @@ function LoanCard({ loanCategories }) {
           </span>
         </div>
 
-        <NavLink to="/all-loans">
+        <NavLink to={`/loan-details/${loan._id}`}>
           <button className="w-full cursor-pointer inline-flex items-center justify-center px-4 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg text-gray-900 bg-green-500 hover:bg-green-600 transition duration-300 focus:outline-none focus:ring-4 focus:ring-green-400 active:bg-green-700">
             View Details
           </button>
