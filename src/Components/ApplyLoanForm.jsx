@@ -4,61 +4,72 @@ import {
     FileText, AtSign, DollarSign, Percent, User, Phone, 
     CreditCard, Briefcase, TrendingUp, MapPin, Edit3, AlertTriangle, Send 
 } from 'lucide-react';
-import { NavLink, useLoaderData } from 'react-router'
+import { NavLink, useLoaderData } from 'react-router';
 import { AuthContext } from '../Auth/AuthProvider';
-
+import axios from 'axios';
 
 function ApplyLoanForm() {
-
-  const {user,loading} = useContext(AuthContext);
-
+  const { user, loading } = useContext(AuthContext);
   const loanCategories = useLoaderData();
 
   const AUTO_FILL_DATA = {
     loanTitle: loanCategories?.LoanTitle || 'N/A',
     interestRate: loanCategories?.InterestRate ? `${loanCategories.InterestRate}%` : 'N/A',
-    status: loanCategories?.status || 'N/A',
+    status: loanCategories?.status || 'Pending',
+    userEmail: user?.email || ''
   };
-  const { register, handleSubmit, formState: { errors } } = useForm();
-  const [submissionStatus, setSubmissionStatus] = useState(null);
 
+
+  const { register, handleSubmit, reset, formState: { errors } } = useForm();
+  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const ErrorMessage = ({ message }) => (
+    <p className="flex items-center mt-1 text-sm text-red-400 font-medium">
+      <AlertTriangle className="w-4 h-4 mr-1 flex-shrink-0" />
+      {message}
+    </p>
+  );
 
   const handelApplySubmit = async (data) => {
-        setLoading(true);
-        setSubmissionStatus(null);
-        console.log("Attempting loan submission for:", AUTO_FILL_DATA.userEmail);
+    setSubmissionStatus(null);
+    setSubmitting(true);
 
-        try {
-            // Simulate a network delay (e.g., 3 seconds)
-            await new Promise(resolve => setTimeout(resolve, 3000));
-            
-            // Append auto-filled and default data to the submission object
-            const fullSubmission = {
-                ...AUTO_FILL_DATA,
-                ...data,
-                submissionDate: new Date().toISOString()
-            };
+    try {
+      const fullSubmission = {
+        ...AUTO_FILL_DATA,
+        ...data,
+        submissionDate: new Date().toISOString()
+      };
 
-            // Simulate successful submission
-            setSubmissionStatus('success');
-            console.log("Loan Application Submitted Successfully! Data:", fullSubmission);
-            // Optionally, reset the form if submission is successful
-            // reset(); 
-        } catch (error) {
-            console.error("Submission failed:", error.message);
-            setSubmissionStatus('error');
-        } finally {
-            setLoading(false);
-        }
-    };
+      const url = 'http://localhost:3000/add-loan';
+      const response = await axios.post(url, fullSubmission);
+
+      // adjust success condition depending on your API response shape
+      if (response.status >= 200 && response.status < 300) {
+        setSubmissionStatus('success');
+        console.log('Loan Application Submitted Successfully! Data:', fullSubmission, 'Response:', response.data);
+        reset();
+      } else {
+        setSubmissionStatus('error');
+        console.error('Unexpected response', response);
+      }
+    } catch (error) {
+      console.error('Submission failed:', error);
+      setSubmissionStatus('error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
-           <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4">
-            {/* Dark theme card container, wider for complex form */}
+           <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 my-10">
+   
             <div className="w-full max-w-3xl bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl border border-gray-700 transform transition-all duration-300 hover:shadow-3xl">
                 
-                {/* Header */}
+       
                 <div className="text-center mb-8">
-                    {/* Icon color uses indigo-500 base */}
+       
                     <FileText className="w-10 h-10 mx-auto text-indigo-500" /> 
                     <h2 className="mt-4 text-3xl font-extrabold text-white">
                         Loan Application
@@ -68,11 +79,10 @@ function ApplyLoanForm() {
                     </p>
                 </div>
 
-                {/* Submission Status Message (Simulated Toast/Sweet Alert) */}
                 {submissionStatus === 'success' && (
                     <div className="mb-6 p-4 bg-green-900/40 border-l-4 border-green-500 text-green-300 rounded-lg animate-pulse" role="alert">
                         <p className="font-bold">Application Submitted!</p>
-                        <p>Your loan application is now **Pending** review.</p>
+                        <p>Your loan application is now <strong>Pending</strong> review.</p>
                     </div>
                 )}
                 {submissionStatus === 'error' && (
@@ -82,11 +92,11 @@ function ApplyLoanForm() {
                     </div>
                 )}
 
-                {/* Read-Only Data Section */}
+             
                 <div className="mb-8 p-4 bg-gray-700 rounded-lg grid grid-cols-2 lg:grid-cols-4 gap-4 text-sm font-medium">
                     <div className="col-span-2 lg:col-span-1">
                         <p className="text-gray-400 flex items-center"><AtSign className="w-4 h-4 mr-2" /> User Email</p>
-                        <p className="text-indigo-400 truncate">{user.email}</p>
+                        <p className="text-indigo-400 truncate">{user?.email || 'Not signed in'}</p>
                     </div>
                     <div className="col-span-2 lg:col-span-1">
                         <p className="text-gray-400 flex items-center"><FileText className="w-4 h-4 mr-2" /> Loan Title</p>
@@ -115,10 +125,10 @@ function ApplyLoanForm() {
                                 <input
                                     id="firstName"
                                     type="text"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('firstName', { required: 'First Name is required' })}
                                     className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.firstName ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                                    placeholder="Jane"
+                                    placeholder="Priom"
                                 />
                             </div>
                             {errors.firstName && <ErrorMessage message={errors.firstName.message} />}
@@ -132,10 +142,10 @@ function ApplyLoanForm() {
                                 <input
                                     id="lastName"
                                     type="text"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('lastName', { required: 'Last Name is required' })}
                                     className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.lastName ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                                    placeholder="Doe"
+                                    placeholder="Sheikh"
                                 />
                             </div>
                             {errors.lastName && <ErrorMessage message={errors.lastName.message} />}
@@ -152,7 +162,7 @@ function ApplyLoanForm() {
                                 <input
                                     id="contactNumber"
                                     type="tel"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('contactNumber', { 
                                         required: 'Contact Number is required',
                                         pattern: {
@@ -175,7 +185,7 @@ function ApplyLoanForm() {
                                 <input
                                     id="nationalID"
                                     type="text"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('nationalID', { required: 'ID/Passport Number is required' })}
                                     className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.nationalID ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
                                     placeholder="ABC-123456789"
@@ -195,7 +205,7 @@ function ApplyLoanForm() {
                                 <input
                                     id="incomeSource"
                                     type="text"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('incomeSource', { required: 'Income Source is required' })}
                                     className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.incomeSource ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
                                     placeholder="Software Engineer"
@@ -213,7 +223,7 @@ function ApplyLoanForm() {
                                     id="monthlyIncome"
                                     type="number"
                                     step="0.01"
-                                    disabled={loading}
+                                    disabled={loading || submitting}
                                     {...register('monthlyIncome', { 
                                         required: 'Monthly Income is required',
                                         min: { value: 1, message: "Income must be greater than zero" } 
@@ -236,7 +246,7 @@ function ApplyLoanForm() {
                                 id="loanAmount"
                                 type="number"
                                 step="100"
-                                disabled={loading}
+                                disabled={loading || submitting}
                                 {...register('loanAmount', { 
                                     required: 'Loan Amount is required',
                                     min: { value: 500, message: "Loan amount must be at least 500" } 
@@ -256,7 +266,7 @@ function ApplyLoanForm() {
                             <textarea
                                 id="address"
                                 rows="3"
-                                disabled={loading}
+                                disabled={loading || submitting}
                                 {...register('address', { required: 'Address is required' })}
                                 className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.address ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm resize-none`}
                                 placeholder="Street Address, City, State/Province, Zip/Postal Code"
@@ -273,7 +283,7 @@ function ApplyLoanForm() {
                             <textarea
                                 id="reasonForLoan"
                                 rows="3"
-                                disabled={loading}
+                                disabled={loading || submitting}
                                 {...register('reasonForLoan', { required: 'Reason for loan is required' })}
                                 className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${errors.reasonForLoan ? 'border-red-500' : 'border-gray-600 focus:ring-indigo-500'} rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm resize-none`}
                                 placeholder="e.g., Home renovation, debt consolidation, business investment."
@@ -290,7 +300,7 @@ function ApplyLoanForm() {
                             <textarea
                                 id="extraNotes"
                                 rows="3"
-                                disabled={loading}
+                                disabled={loading || submitting}
                                 {...register('extraNotes')}
                                 className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border border-gray-600 focus:ring-indigo-500 rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm resize-none`}
                                 placeholder="Add any relevant information here."
@@ -303,15 +313,11 @@ function ApplyLoanForm() {
                     <div className="md:col-span-2 pt-4">
                         <button
                             type="submit"
-                            disabled={loading}
-                            // Button color uses indigo-500 base
+                            disabled={loading || submitting}
                             className={`w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-lg text-lg font-bold text-white transition duration-200 ease-in-out 
-                                ${loading 
-                                    ? 'bg-indigo-400 cursor-not-allowed' 
-                                    : 'bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700 focus:ring-offset-gray-800'
-                                }`}
+                                ${(loading || submitting) ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700 focus:ring-offset-gray-800'}`}
                         >
-                            {loading ? (
+                          {submitting ? (
                                 <svg className="animate-spin -ml-1 mr-3 h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>

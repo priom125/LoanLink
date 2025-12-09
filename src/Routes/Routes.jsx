@@ -59,7 +59,7 @@ const router = createBrowserRouter([
       },
       {
         path: "/apply-loan/:id",
-        element: <ApplyLoanForm />,
+        element:<ProtectedRoute> <ApplyLoanForm /></ProtectedRoute>,
          loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
