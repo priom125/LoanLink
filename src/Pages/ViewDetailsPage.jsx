@@ -4,7 +4,7 @@ import { NavLink, useLoaderData } from 'react-router';
 function ViewDetailsPage() {
 
     const loan = useLoaderData();
-    console.log(loan);
+    // console.log(loan);
   return (
         <div className="w-full max-w-full bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
             
@@ -107,7 +107,7 @@ function ViewDetailsPage() {
                     {/* Apply Button */}
                     <div className="mt-8">
                         <NavLink
-                            to="/apply-loan"
+                            to={`/apply-loan/${loan._id}`}
                             onClick={() => onApplyClick(loan.LoanTitle)}
                             className={`w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-xl font-bold rounded-lg shadow-xl text-gray-900 ${
                                 loan.color === 'green'
