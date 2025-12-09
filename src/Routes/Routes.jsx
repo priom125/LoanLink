@@ -36,7 +36,10 @@ const router = createBrowserRouter([
       {
        path: "/all-loans",
         element: <AllLoans />,
-   
+        loader: async () => {
+          return fetch('http://localhost:3000/all-loan-category');
+        },
+        hydrateFallbackElement: <Loading/>,
  
       },
       {

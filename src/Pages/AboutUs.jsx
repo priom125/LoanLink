@@ -2,12 +2,12 @@ import React from 'react'
 
 function AboutUs() {
   return (
-   <div className="w-full max-w-7xl py-12 px-4 sm:px-6 lg:px-8">
+   <div className=" max-w-full py-12 px-4 sm:px-6 lg:px-8 bg-gray-950">
         <h1 className="text-5xl font-extrabold text-white text-center mb-8">
             Our Mission: Empowering Global Microfinance
         </h1>
         
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 p-8 space-y-8 text-gray-300">
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 p-8 space-y-8 text-gray-300 ">
             
             <section>
                 <h2 className="text-3xl font-bold text-green-500 mb-4">
