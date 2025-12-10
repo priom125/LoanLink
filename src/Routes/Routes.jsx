@@ -103,6 +103,10 @@ const router = createBrowserRouter([
       {
         path: "my-loan",
         element: <MyLoanByUser />,
+        loader: async () => {
+          return fetch("http://localhost:3000/my-loan?");
+        },
+        hydrateFallbackElement: <Loading />,
       },
       // keep the old dashboard overview (optional)
       {
