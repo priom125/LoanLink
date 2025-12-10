@@ -14,6 +14,9 @@ import Loading from "../Pages/Loading";
 import DashBoard from "../Pages/DashBoard";
 import ViewDetailsPage from "../Pages/ViewDetailsPage";
 import ProtectedRoute from "./ProtectedRoutes";
+import DashboardLauout from "../Layouts/DashboardLauout";
+import MyLoanByUser from "../Pages/MyLoanByUser";
+import UserProfile from "../Pages/UserProfile";
 
 const router = createBrowserRouter([
   {
@@ -66,10 +69,6 @@ const router = createBrowserRouter([
         },
         hydrateFallbackElement: <Loading />,
       },
-      {
-        path: "/dashboard",
-        element: <DashBoard />,
-      },
     ],
   },
   {
@@ -84,6 +83,31 @@ const router = createBrowserRouter([
       {
         path: "/register",
         element: <Register />,
+      },
+    ],
+  },
+  {
+    path: "/dashboard",
+    element: <DashboardLauout />,
+    children: [
+      // Default route for /dashboard -> show My Profile
+      {
+        index: true,
+        element: <UserProfile />,
+      },
+      // explicit child routes (relative paths)
+      {
+        path: "my-profile",
+        element: <UserProfile />,
+      },
+      {
+        path: "my-loan",
+        element: <MyLoanByUser />,
+      },
+      // keep the old dashboard overview (optional)
+      {
+        path: "overview",
+        element: <DashBoard />,
       },
     ],
   },
