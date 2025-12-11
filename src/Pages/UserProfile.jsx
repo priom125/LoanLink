@@ -1,17 +1,24 @@
 import React, { useContext } from 'react'
 import { AuthContext } from '../Auth/AuthProvider';
-import { LogOut, User, Mail, Shield, Loader, BookOpenCheck } from 'lucide-react';
+import { LogOut, User, Mail, Shield, Loader, BookOpenCheck, MapPin } from 'lucide-react';
 import  { useState, useEffect, useCallback } from 'react';
 import { toast } from 'react-toastify';
+import useAxios from '../hooks/useAxios';
+import { useQuery } from '@tanstack/react-query';
 
 function UserProfile() {
   const { user, logOut } = useContext(AuthContext);
-  console.log(user);  
-   const formatDate = (timestamp) => {
-        if (!timestamp) return 'N/A';
-        const date = new Date(timestamp);
-        return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
-    };
+  
+const axiosInstance = useAxios();
+
+const {data:myLoan = []} = useQuery({
+    queryKey: ['my-loans', user?.email],
+    queryFn: async () => {
+        const res = await axiosInstance.get(`/my-loan?email=${user?.email}`);
+        return res.data;
+    },
+});
+console.log(myLoan);
 
       const handleLogout = () => {
     logOut()
@@ -33,10 +40,10 @@ function UserProfile() {
                             
                         />
                         <h1 className="mt-4 text-3xl font-extrabold text-indigo-500">
-                            {user.displayName || 'No Name Provided'}
+                            {user?.displayName || 'No Name Provided'}
                         </h1>
                         <p className="text-sm  font-medium mt-1">
-                            {user.email || 'No Email Provided'}
+                            {user?.email || 'No Email Provided'}
                         </p>
                     </div>
 
@@ -44,8 +51,9 @@ function UserProfile() {
                         <p className='flex space-x-2'><User className='text-green-500'/> {user?.uid}</p>
                         <p className='flex space-x-2'><Mail className='text-green-500'/> {user?.email}</p>
                         <p className='flex space-x-2'><Shield className='text-green-500'/> {user?.emailVerified ? 'Verified' : 'Not Verified'}</p>
-                        <p className='flex space-x-2'><Loader className='text-green-500'/> {formatDate(user.metadata?.creationTime)}</p> 
-                        <p className='flex space-x-2'><BookOpenCheck className='text-green-500'/> {formatDate(user.metadata?.lastSignInTime)}</p>
+                        <p className='flex space-x-2'><MapPin className='text-green-500'/> {myLoan[0]?.address}</p>
+                        
+                       
                     </div>
 
                     <div className="flex justify-center pt-4">

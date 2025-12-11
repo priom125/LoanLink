@@ -17,6 +17,7 @@ import ProtectedRoute from "./ProtectedRoutes";
 import DashboardLauout from "../Layouts/DashboardLauout";
 import MyLoanByUser from "../Pages/MyLoanByUser";
 import UserProfile from "../Pages/UserProfile";
+import { hydrate } from "@tanstack/react-query";
 
 const router = createBrowserRouter([
   {
@@ -50,7 +51,9 @@ const router = createBrowserRouter([
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
+        
         },
+          hydrateFallbackElement: <Loading />,
       },
       {
         path: "/about-us",
@@ -68,6 +71,11 @@ const router = createBrowserRouter([
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
+      },
+      {
+        path: "/apply-loan",
+        element:<ProtectedRoute> <ApplyLoanForm /></ProtectedRoute>,
+        
       },
     ],
   },

@@ -5,6 +5,7 @@ function ViewDetailsPage() {
 
     const loan = useLoaderData();
     // console.log(loan);
+    const AvailableEMIPlans = loan.AvailableEMIPlans || [];
   return (
         <div className="w-full max-w-full bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
             
@@ -69,7 +70,7 @@ function ViewDetailsPage() {
                         <div className="p-4 bg-gray-800 rounded-lg text-center col-span-2 md:col-span-1">
                             <p className="text-sm text-gray-400 uppercase font-medium">Available Repayment Plans</p>
                             <p className={`text-xl font-bold text-gray-200 mt-1`}>
-                                {loan.AvailableEMIPlans.join(', ')}
+                                {AvailableEMIPlans}
                             </p>
                         </div>
                     </div>
@@ -90,7 +91,7 @@ function ViewDetailsPage() {
                             Flexible EMI Plans
                         </h2>
                         <div className="flex flex-wrap gap-3">
-                            {loan.AvailableEMIPlans.map((plan, index) => (
+                            {AvailableEMIPlans.map((plan, index) => (
                                 <span key={index} className={`px-4 py-2 rounded-full font-medium ${
                                     loan.color === 'green'
                                     ? 'bg-green-500/20 text-green-400'
