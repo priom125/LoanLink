@@ -1,10 +1,26 @@
 import React, { useContext } from "react";
 import { NavLink } from "react-router";
 import { AuthContext } from "../Auth/AuthProvider";
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
 
 function Navbar() {
   const { user, logOut, loading } = useContext(AuthContext);
 
+const axiosInstance = useAxios();
+
+const {data:userData = []} = useQuery({
+    queryKey: ['user-data', user?.email],
+    queryFn: async () => {
+        const res = await axiosInstance.get(`/user-data?email=${user?.email}`);
+        return res.data;
+    },
+    enabled: !!user?.email,
+});
+  const Role = userData[0]?.role;
+  const dashboardPath = Role === 'manager' ? '/dashboard/manage-users' : '/dashboard';
+
+ 
   const handleLogout = () => {
     logOut()
       .then(() => {
@@ -101,7 +117,7 @@ function Navbar() {
           </li>
           {user && (
             <li className="text-white font-semibold">
-              <NavLink to="/dashboard">Dashboard</NavLink>
+              <NavLink to={dashboardPath}>Dashboard</NavLink>
             </li>
           )}
         </ul>

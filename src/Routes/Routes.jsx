@@ -18,6 +18,7 @@ import DashboardLauout from "../Layouts/DashboardLauout";
 import MyLoanByUser from "../Pages/MyLoanByUser";
 import UserProfile from "../Pages/UserProfile";
 import { hydrate } from "@tanstack/react-query";
+import ManagerDashBoard from "../Pages/ManagerDashBoard";
 
 const router = createBrowserRouter([
   {
@@ -115,8 +116,8 @@ const router = createBrowserRouter([
       },
       // keep the old dashboard overview (optional)
       {
-        path: "overview",
-        element: <DashBoard />,
+        path: "manage-users",
+        element: <ManagerDashBoard />,
       },
     ],
   },
