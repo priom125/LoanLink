@@ -4,6 +4,7 @@ import { NavLink, useLocation, useNavigate } from "react-router";
 import { LogIn, AtSign, Lock, AlertTriangle, Chrome } from "lucide-react";
 import { AuthContext } from "../Auth/AuthProvider";
 import { toast } from "react-toastify";
+import axios from 'axios';
 
 function Login() {
   const {
@@ -28,20 +29,35 @@ function Login() {
     </p>
   );
 
-  const handleGoogleLogin = () => {
-    // Placeholder for Google login logic
-    googleLogin()
-      .then((result) => {
-        const user = result.user;
-        console.log("Google user:", user);
-         const from = location.state?.from || '/';
-        navigate(from);
-      })
-      .catch((error) => {
-        console.error("Google login error:", error);
-          toast.error("Login Failed. Please try again.");
-      });
-    console.log("Google login clicked");
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    try {
+      const result = await googleLogin();
+      const user = result.user;
+      console.log("Google user:", user);
+
+      // send user to backend (create or upsert)
+      const fullSubmission = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "borrower"
+      };
+
+      const url = "http://localhost:3000/users";
+      const response = await axios.post(url, fullSubmission);
+
+      console.log("Registration successful! User Data:", response.data);
+      toast.success("Login successful!");
+
+      const from = location.state?.from || "/";
+      navigate(from);
+    } catch (error) {
+      console.error("Google login error:", error);
+      toast.error("Login Failed. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   // Simulate API call for form submission

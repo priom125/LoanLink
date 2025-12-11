@@ -1,5 +1,6 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from 'axios';
 import {
   UserPlus,
   User,
@@ -28,6 +29,8 @@ function Register() {
     const navigate = useNavigate();
   const location = useLocation();
 
+
+
   // Helper component for displaying form errors
   const ErrorMessage = ({ message }) => (
     <p className="flex items-center mt-1 text-sm text-red-400 font-medium">
@@ -36,13 +39,16 @@ function Register() {
     </p>
   );
 
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin =  () => {
     // Placeholder for Google login logic
     googleLogin()
       .then((result) => {
         const user = result.user;
         console.log("Google user:", user);
-       
+        const fullSubmission = {name: user.displayName, email: user.email, photoURL: user.photoURL, role: 'borrower' };
+        const url = 'http://localhost:3000/users';
+      const response = axios.post(url, fullSubmission);
+      console.log("Registration successful! User Data:", data);
         const from = location.state?.from || '/';
         navigate(from);
       })
@@ -65,7 +71,11 @@ function Register() {
         console.log("User created:", user);
       }
       setSubmissionStatus("success");
+      const fullSubmission = { ...data};
+      
 
+      const url = 'http://localhost:3000/users';
+      const response = await axios.post(url, fullSubmission);
       console.log("Registration successful! User Data:", data);
       reset(); 
       const from = location.state?.from || '/';
