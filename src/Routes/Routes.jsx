@@ -98,15 +98,12 @@ const router = createBrowserRouter([
       // explicit child routes (relative paths)
       {
         path: "my-profile",
-        element: <UserProfile />,
+        element:<ProtectedRoute><UserProfile /></ProtectedRoute>,
       },
       {
         path: "my-loan",
-        element: <MyLoanByUser />,
-        loader: async () => {
-          return fetch("http://localhost:3000/my-loan?");
-        },
-        hydrateFallbackElement: <Loading />,
+        element: <ProtectedRoute><MyLoanByUser /></ProtectedRoute>,
+       
       },
       // keep the old dashboard overview (optional)
       {

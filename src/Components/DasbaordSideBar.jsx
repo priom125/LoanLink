@@ -42,7 +42,7 @@ function DasbaordSideBar() {
         </li>
         <li>
           <NavLink to="/dashboard/my-profile">
-          <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Homepage">
+          <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Profile">
             {/* Home icon */}
             <User className="my-1.5 inline-block size-4" />
             <span className="is-drawer-close:hidden">My Profile</span>
@@ -53,7 +53,7 @@ function DasbaordSideBar() {
         {/* List item */}
         <li>
           <NavLink to="/dashboard/my-loan">
-            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Settings">
+            <button className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Loan">
             {/* Settings icon */}
             <HandCoins className="my-1.5 inline-block size-4" />
             <span className="is-drawer-close:hidden">My Loan</span>
