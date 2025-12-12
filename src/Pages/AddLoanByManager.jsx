@@ -20,7 +20,6 @@ import { ToastContainer, toast } from "react-toastify";
 import useAxios from "../hooks/useAxios";
 import { NavLink } from "react-router";
 
-
 const SYSTEM_DATE = new Date().toLocaleDateString("en-US", {
   year: "numeric",
   month: "short",
@@ -80,15 +79,34 @@ const AddLoanByManager = () => {
     setLoading(true);
 
     try {
+      // Build base payload first
       const newLoanProduct = {
         ...data,
         dateCreated: SYSTEM_DATE,
         status: "Pending",
-
       };
 
-      console.log("Submitting New Loan Product:", newLoanProduct.imagesUpload[0].name);
+      // If an image file was provided, upload it first to imgbb
+      const file = data.imagesUpload?.[0];
+      if (file) {
+        const imageUploadUrl = `https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMAGE_HOST}`;
+        const formData = new FormData();
+        formData.append("image", file);
 
+        // Use axios instance to upload image
+        const imageResponse = await axiosInstance.post(imageUploadUrl, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+
+        const imageUrl = imageResponse?.data?.data?.display_url;
+        if (imageUrl) {
+          // attach the uploaded image URL to payload
+          newLoanProduct.display_url = imageUrl;
+        }
+        console.log("Image uploaded, url:", imageUrl);
+      }
+
+      // Now send the full payload to backend
       const url = "/dashboard/add-loan-category";
       const response = await axiosInstance.post(url, newLoanProduct);
 
