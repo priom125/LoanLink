@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { NavLink, Outlet } from "react-router";
-import { HandCoins, Handshake, Home, StickyNote, User, UserCog } from "lucide-react";
+import { HandCoins, Handshake, Home, MonitorCog, StickyNote, User, UserCog } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../Auth/AuthProvider";
 import useAxios from "../hooks/useAxios";
@@ -91,6 +91,18 @@ function DasbaordSideBar() {
           >
             {/* Added mr-2 for spacing */}
             <UserCog className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">Manage Users</span>
+          </button>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/dashboard/manage-loans">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="Manage Loans"
+          >
+            {/* Added mr-2 for spacing */}
+            <MonitorCog className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Manage Users</span>
           </button>
         </NavLink>

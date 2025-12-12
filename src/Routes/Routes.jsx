@@ -23,6 +23,7 @@ import ManagerDashBoard from "../Pages/ManagerDashBoard";
 import AddLoanByManager from "../Pages/AddLoanByManager";
 import PendingLoan from "../Pages/PendingLoan";
 import ApprovedLoans from "../Pages/ApprovedLoans";
+import ManageLoans from "../Pages/ManageLoans";
 
 const router = createBrowserRouter([
   {
@@ -126,6 +127,10 @@ const router = createBrowserRouter([
       {
         path: "manage-users",
         element: <ManagerDashBoard />,
+      },
+      {
+        path: "manage-loans",
+        element: <ManageLoans />,
       },
       {
         path: "pending-loans",
