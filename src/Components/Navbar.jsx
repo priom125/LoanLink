@@ -82,12 +82,16 @@ const {data:userData = []} = useQuery({
             <li className="text-white font-semibold">
               <NavLink to="/all-loans">All Loans</NavLink>
             </li>
-            <li className="text-white font-semibold">
-              <NavLink to="/about-us">About Us</NavLink>
-            </li>
-            <li className="text-white font-semibold">
-              <NavLink to="/contact">Contact</NavLink>
-            </li>
+            {!user && (
+              <>
+                <li className="text-white font-semibold">
+                  <NavLink to="/about-us">About Us</NavLink>
+                </li>
+                <li className="text-white font-semibold">
+                  <NavLink to="/contact">Contact</NavLink>
+                </li>
+              </>
+            )}
             {user && (
               <li className="text-white font-semibold">
                 <NavLink to="/dashboard">Dashboard</NavLink>
@@ -109,12 +113,16 @@ const {data:userData = []} = useQuery({
           <li className="text-white font-semibold">
             <NavLink to="/all-loans">All Loans</NavLink>
           </li>
-          <li className="text-white font-semibold">
-            <NavLink to="/about-us">About Us</NavLink>
-          </li>
-          <li className="text-white font-semibold">
-            <NavLink to="/contact">Contact</NavLink>
-          </li>
+          {!user && (
+            <>
+              <li className="text-white font-semibold">
+                <NavLink to="/about-us">About Us</NavLink>
+              </li>
+              <li className="text-white font-semibold">
+                <NavLink to="/contact">Contact</NavLink>
+              </li>
+            </>
+          )}
           {user && (
             <li className="text-white font-semibold">
               <NavLink to={dashboardPath}>Dashboard</NavLink>

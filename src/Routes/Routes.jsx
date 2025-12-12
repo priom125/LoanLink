@@ -19,6 +19,9 @@ import MyLoanByUser from "../Pages/MyLoanByUser";
 import UserProfile from "../Pages/UserProfile";
 import { hydrate } from "@tanstack/react-query";
 import ManagerDashBoard from "../Pages/ManagerDashBoard";
+import AddLoanByManager from "../Pages/AddLoanByManager";
+import PendingLoan from "../Pages/PendingLoan";
+import ApprovedLoans from "../Pages/ApprovedLoans";
 
 const router = createBrowserRouter([
   {
@@ -116,11 +119,24 @@ const router = createBrowserRouter([
       },
       // keep the old dashboard overview (optional)
       {
+        path: "add-loan",
+        element: <AddLoanByManager />,
+      },
+      {
         path: "manage-users",
         element: <ManagerDashBoard />,
       },
+      {
+        path: "pending-loans",
+        element: <PendingLoan />,
+      },
+      {
+        path: "approved-loans",
+        element: <ApprovedLoans />,
+      },
     ],
   },
+
 ]);
 
 export default router;

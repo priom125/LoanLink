@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { AuthContext } from '../Auth/AuthProvider';
 import { LogOut, User, Mail, Shield, Loader, BookOpenCheck, MapPin } from 'lucide-react';
 import  { useState, useEffect, useCallback } from 'react';
-import { toast } from 'react-toastify';
+
 import useAxios from '../hooks/useAxios';
 import { useQuery } from '@tanstack/react-query';
 
@@ -18,7 +18,21 @@ const {data:myLoan = []} = useQuery({
         return res.data;
     },
 });
-console.log(myLoan);
+
+
+const {data:userData = []} = useQuery({
+    queryKey: ['user-data', user?.email],
+    queryFn: async () => {
+        const res = await axiosInstance.get(`/user-data?email=${user?.email}`);
+        return res.data;
+    },
+    enabled: !!user?.email,
+});
+
+  const Role = userData[0]?.role;
+
+
+
 
       const handleLogout = () => {
     logOut()
@@ -48,7 +62,7 @@ console.log(myLoan);
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-                        <p className='flex space-x-2'><User className='text-green-500'/> {user?.uid}</p>
+                        <p className='flex space-x-2'><User className='text-green-500'/> {Role}</p>
                         <p className='flex space-x-2'><Mail className='text-green-500'/> {user?.email}</p>
                         <p className='flex space-x-2'><Shield className='text-green-500'/> {user?.emailVerified ? 'Verified' : 'Not Verified'}</p>
                         <p className='flex space-x-2'><MapPin className='text-green-500'/> {myLoan[0]?.address}</p>
