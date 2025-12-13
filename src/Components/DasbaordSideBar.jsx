@@ -67,6 +67,47 @@ function DasbaordSideBar() {
       </NavLink>
     </li>
   );
+  const adminNavItems = (
+    <>
+    <li>
+      <NavLink to="/dashboard/loan-applications">
+        <button
+          className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+          data-tip="Loan Applications"
+        >
+        
+          <HandCoins className="my-1.5 inline-block size-4 mr-2" />
+          <span className="is-drawer-close:hidden">Loan Applications</span>
+        </button>
+      </NavLink>
+    </li>
+     <li>
+        <NavLink to="/dashboard/manage-users">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="Manage Users"
+          >
+            {/* Added mr-2 for spacing */}
+            <UserCog className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">Manage Users</span>
+          </button>
+        </NavLink>
+      </li>
+     <li>
+        <NavLink to="/dashboard/all-loan">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="All Loans"
+          >
+            {/* Added mr-2 for spacing */}
+            <UserCog className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">All Loans</span>
+          </button>
+        </NavLink>
+      </li>
+    </>
+    
+  );
 
 
   const managerNavItems = (
@@ -83,18 +124,7 @@ function DasbaordSideBar() {
           </button>
         </NavLink>
       </li>
-      <li>
-        <NavLink to="/dashboard/manage-users">
-          <button
-            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            data-tip="Manage Users"
-          >
-            {/* Added mr-2 for spacing */}
-            <UserCog className="my-1.5 inline-block size-4 mr-2" />
-            <span className="is-drawer-close:hidden">Manage Users</span>
-          </button>
-        </NavLink>
-      </li>
+     
       <li>
         <NavLink to="/dashboard/manage-loans">
           <button
@@ -140,6 +170,8 @@ function DasbaordSideBar() {
     roleSpecificItems = borrowerNavItems;
   } else if (Role === "manager") {
     roleSpecificItems = managerNavItems;
+  } else if (Role === "admin") {
+    roleSpecificItems = adminNavItems;
   }
   
   // (Loading State Block - Omitted for brevity, assumed to be the same)

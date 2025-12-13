@@ -8,7 +8,7 @@ function AllLoans() {
   console.log(loanCategories);
   return (
  
-   <section className="w-full min-h-screen ">
+   <section className="w-full min-h-screen my-20">
     <div className='py-12 px-4 sm:px-6 lg:px-8 bg-gray-950 max-w-full'>
       <h2 className="text-4xl font-extrabold text-white text-center mb-12">
         Explore Our Loan Categories

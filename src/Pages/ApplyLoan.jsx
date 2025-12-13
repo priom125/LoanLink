@@ -8,16 +8,17 @@ import { NavLink, useLoaderData } from 'react-router';
 import { AuthContext } from '../Auth/AuthProvider';
 import axios from 'axios';
 
-function ApplyLoanForm() {
-  const { user, loading } = useContext(AuthContext);
+function ApplyLoan() {
+      const { user, loading } = useContext(AuthContext);
   const loanCategories = useLoaderData();
 
   const AUTO_FILL_DATA = {
-    loanTitle: loanCategories?.loanTitle || 'N/A',
-    interestRate: loanCategories?.interestRate ? `${loanCategories.interestRate}%` : 'N/A',
-    status: 'Pending',
+    status: 'Pending',  
     userEmail: user?.email || '',
-    category: loanCategories.category || ''
+    loanTitle: 'N/A',
+    interestRate: 'N/A',
+    category: loanCategories?.category || 'N/A',
+    
   };
 
 
@@ -62,9 +63,8 @@ function ApplyLoanForm() {
       setSubmitting(false);
     }
   };
-
   return (
-           <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 my-10">
+               <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 my-10">
    
             <div className="w-full max-w-3xl bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl border border-gray-700 transform transition-all duration-300 hover:shadow-3xl">
                 
@@ -351,4 +351,4 @@ function ApplyLoanForm() {
   )
 }
 
-export default ApplyLoanForm
+export default ApplyLoan

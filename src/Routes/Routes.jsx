@@ -24,6 +24,9 @@ import AddLoanByManager from "../Pages/AddLoanByManager";
 import PendingLoan from "../Pages/PendingLoan";
 import ApprovedLoans from "../Pages/ApprovedLoans";
 import ManageLoans from "../Pages/ManageLoans";
+import AllLoanApplications from "../Pages/AllLoanApplications";
+import AllLoan from "../Pages/AllLoan";
+import ApplyLoan from "../Pages/ApplyLoan";
 
 const router = createBrowserRouter([
   {
@@ -64,6 +67,10 @@ const router = createBrowserRouter([
       {
         path: "/about-us",
         element: <AboutUs />,
+      },
+      {
+        path: "/apply-loan",
+        element: <ApplyLoan />,
       },
       {
         path: "/contact",
@@ -127,6 +134,14 @@ const router = createBrowserRouter([
       {
         path: "manage-users",
         element: <ManagerDashBoard />,
+      },
+      {
+        path: "loan-applications",
+        element:  <AllLoanApplications />,
+      },
+      {
+        path: "all-loan",
+        element:<AllLoan /> ,
       },
       {
         path: "manage-loans",

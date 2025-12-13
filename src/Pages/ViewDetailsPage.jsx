@@ -4,18 +4,21 @@ import { NavLink, useLoaderData } from 'react-router';
 function ViewDetailsPage() {
 
     const loan = useLoaderData();
-    // console.log(loan);
-    const AvailableEMIPlans = loan.AvailableEMIPlans || [];
+    // console.log(loan.emiPlans);
+    const AvailableEMIPlans = loan.emiPlans || [];
+    const EMIPlansArray = Array.isArray(AvailableEMIPlans)
+        ? AvailableEMIPlans
+        : (typeof AvailableEMIPlans === 'string' ? AvailableEMIPlans.split(',').map(s => s.trim()) : []);
   return (
-        <div className="w-full max-w-full bg-gray-950 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-full bg-gray-950 py-12 my-10 px-4 sm:px-6 lg:px-8">
             
             <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
                 
                 {/* Loan Image */}
                 <div className="h-64 sm:h-96 overflow-hidden">
                     <img
-                        src={loan.LoanImage}
-                        alt={loan.LoanTitle}
+                        src={loan.display_url}
+                        alt={loan.loanTitle}
                         className="w-full h-full object-cover"
                        
                     />
@@ -26,7 +29,7 @@ function ViewDetailsPage() {
                     {/* Title and Category */}
                     <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-6 border-b border-gray-800 pb-6">
                         <h1 className="text-4xl md:text-5xl font-extrabold text-white">
-                            {loan.LoanTitle}
+                            {loan.loanTitle}
                         </h1>
                         <span className={`mt-3 sm:mt-0 px-4 py-1 rounded-full text-sm font-semibold uppercase tracking-wider ${
                             loan.color === 'green'
@@ -35,7 +38,7 @@ function ViewDetailsPage() {
                             ? 'bg-yellow-500/20 text-yellow-400'
                             : 'bg-red-500/20 text-red-400'
                         }`}>
-                            {loan.Category}
+                            {loan.category}
                         </span>
                     </div>
 
@@ -51,7 +54,7 @@ function ViewDetailsPage() {
                                 : loan.color === 'yellow'
                                 ? 'text-yellow-400'
                                 : 'text-red-400'
-                            }`}>{loan.MaxLimit}</p>
+                            }`}>{loan.maxLoanLimit}</p>
                         </div>
 
                         {/* Interest Rate */}
@@ -63,14 +66,14 @@ function ViewDetailsPage() {
                                 : loan.color === 'yellow'
                                 ? 'text-yellow-400'
                                 : 'text-red-400'
-                            }`}>{loan.InterestRate}</p>
+                            }`}>{loan.interestRate}</p>
                         </div>
                         
                         {/* Available EMI Plans */}
                         <div className="p-4 bg-gray-800 rounded-lg text-center col-span-2 md:col-span-1">
                             <p className="text-sm text-gray-400 uppercase font-medium">Available Repayment Plans</p>
                             <p className={`text-xl font-bold text-gray-200 mt-1`}>
-                                {AvailableEMIPlans}
+                                {EMIPlansArray.length ? EMIPlansArray.join(', ') : 'N/A'}
                             </p>
                         </div>
                     </div>
@@ -81,7 +84,7 @@ function ViewDetailsPage() {
                             Loan Overview
                         </h2>
                         <p className="text-lg text-gray-300 leading-relaxed">
-                            {loan.Description}
+                            {loan.description}
                         </p>
                     </section>
 
@@ -91,7 +94,7 @@ function ViewDetailsPage() {
                             Flexible EMI Plans
                         </h2>
                         <div className="flex flex-wrap gap-3">
-                            {AvailableEMIPlans.map((plan, index) => (
+                            {EMIPlansArray.map((plan, index) => (
                                 <span key={index} className={`px-4 py-2 rounded-full font-medium ${
                                     loan.color === 'green'
                                     ? 'bg-green-500/20 text-green-400'
@@ -109,7 +112,7 @@ function ViewDetailsPage() {
                     <div className="mt-8">
                         <NavLink
                             to={`/apply-loan/${loan._id}`}
-                            onClick={() => onApplyClick(loan.LoanTitle)}
+                            onClick={() => onApplyClick(loan.loanTitle)}
                             className={`w-full inline-flex items-center justify-center px-8 py-4 border border-transparent text-xl font-bold rounded-lg shadow-xl text-gray-900 ${
                                 loan.color === 'green'
                                 ? 'bg-green-600 hover:bg-green-700 focus:ring-green-400'

@@ -17,8 +17,12 @@ const {data:userData = []} = useQuery({
     },
     enabled: !!user?.email,
 });
-  const Role = userData[0]?.role;
-  const dashboardPath = Role === 'manager' ? '/dashboard/manage-users' : '/dashboard';
+  // support both shapes: array (from API) or single object
+  const Role = Array.isArray(userData) ? userData[0]?.role : userData?.role;
+  let dashboardPath = '/dashboard';
+  if (Role === 'manager') dashboardPath = '/dashboard/manage-loans';
+  else if (Role === 'admin') dashboardPath = '/dashboard/manage-users';
+  else dashboardPath = '/dashboard';
 
  
   const handleLogout = () => {
@@ -94,7 +98,7 @@ const {data:userData = []} = useQuery({
             )}
             {user && (
               <li className="text-white font-semibold">
-                <NavLink to="/dashboard">Dashboard</NavLink>
+                <NavLink to={dashboardPath}>Dashboard</NavLink>
               </li>
             )}
           </ul>

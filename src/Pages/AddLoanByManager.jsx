@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import {
   FileText,
@@ -19,12 +19,17 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import useAxios from "../hooks/useAxios";
 import { NavLink } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import { AuthContext } from "../Auth/AuthProvider";
+
 
 const SYSTEM_DATE = new Date().toLocaleDateString("en-US", {
   year: "numeric",
   month: "short",
   day: "numeric",
 });
+
+
 
 // Helper component for displaying form errors
 const ErrorMessage = ({ message }) => (
@@ -74,6 +79,20 @@ const AddLoanByManager = () => {
 
   const axiosInstance = useAxios();
 
+  const { user } = useContext(AuthContext);
+
+  const { data: userData = [] } = useQuery({
+    queryKey: ['UserData', user?.email],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`user-data?email=${user.email}`);
+      return res.data;
+    },
+    enabled: !!user?.email,
+  });
+
+  const role = Array.isArray(userData) ? userData[0]?.role : userData?.role;
+  console.log('user role:', role);
+
   // POST form data using axios instance
   const handleAddLoan = async (data) => {
     setLoading(true);
@@ -84,6 +103,8 @@ const AddLoanByManager = () => {
         ...data,
         dateCreated: SYSTEM_DATE,
         status: "Pending",
+        createdByEmail: user?.email,
+        createdByRole: role ?? 'manager',
       };
 
       // If an image file was provided, upload it first to imgbb
@@ -123,6 +144,10 @@ const AddLoanByManager = () => {
       setLoading(false);
     }
   };
+
+
+
+
 
   return (
     // Dark theme background

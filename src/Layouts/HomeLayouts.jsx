@@ -15,7 +15,7 @@ function HomeLayouts() {
     <div className="flex flex-col min-h-screen">
       <Navbar />
 
-      <div className="flex-1  mx-auto">{isLoading ? <Loading /> : <Outlet />}</div>
+      <div className="flex-1  mx-auto ">{isLoading ? <Loading /> : <Outlet />}</div>
       <ToastContainer position="top-center" autoClose={5000} />
 
      <Footer/>

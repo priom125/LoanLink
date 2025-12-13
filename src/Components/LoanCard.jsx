@@ -5,27 +5,27 @@ function LoanCard({ loanCategories }) {
   const loan = loanCategories || {}
 
   return (
-    <div className="bg-gray-900 border border-gray-800 shadow-2xl shadow-black/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/20 transform hover:scale-[1.01]">
+    <div className="bg-gray-900 border my-20 border-gray-800 shadow-2xl shadow-black/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/20 transform hover:scale-[1.01]">
       <div className="h-40 overflow-hidden">
         <img
-          src={loan.LoanImage || '/placeholder.png'}
-          alt={loan.LoanTitle || 'Loan image'}
+          src={loan.display_url || '/placeholder.png'}
+          alt={loan.loanTitle || 'Loan image'}
           className="w-full h-full object-cover transform transition duration-500 hover:scale-110"
         />
       </div>
 
       <div className="p-6">
         <h2 className="text-2xl font-bold text-white mb-2">
-          {loan.LoanTitle || 'Untitled Loan'}
+          {loan.loanTitle || 'Untitled Loan'}
         </h2>
 
         <p className="text-sm text-gray-400 mb-4 h-12 overflow-hidden">
-          {loan.Description || ''}
+          {loan.description || ''}
         </p>
 
         <div className="flex items-center justify-between bg-gray-800 p-3 rounded-lg mb-6">
           <span className="text-sm font-medium text-gray-400">
-            Max Loan Limit: {loan.MaxLimit ?? 'N/A'}
+            Max Loan Limit: {loan.maxLoanLimit ?? 'N/A'}
           </span>
         </div>
 
