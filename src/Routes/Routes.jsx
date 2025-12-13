@@ -27,6 +27,9 @@ import ManageLoans from "../Pages/ManageLoans";
 import AllLoanApplications from "../Pages/AllLoanApplications";
 import AllLoan from "../Pages/AllLoan";
 import ApplyLoan from "../Pages/ApplyLoan";
+import UpdateUserRole from "../Pages/UpdateUserRole";
+import UpdateLoansByAdmin from "../Pages/UpdateLoansByAdmin";
+import UpdateLoanApllicationsStatus from "../Pages/UpdateLoanApllicationsStatus";
 
 const router = createBrowserRouter([
   {
@@ -60,9 +63,8 @@ const router = createBrowserRouter([
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
-        
         },
-          hydrateFallbackElement: <Loading />,
+        hydrateFallbackElement: <Loading />,
       },
       {
         path: "/about-us",
@@ -78,8 +80,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/apply-loan/:id",
-        element:<ProtectedRoute> <ApplyLoanForm /></ProtectedRoute>,
-         loader: async ({ params }) => {
+        element: (
+          <ProtectedRoute>
+            {" "}
+            <ApplyLoanForm />
+          </ProtectedRoute>
+        ),
+        loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
         },
@@ -87,8 +94,12 @@ const router = createBrowserRouter([
       },
       {
         path: "/apply-loan",
-        element:<ProtectedRoute> <ApplyLoanForm /></ProtectedRoute>,
-        
+        element: (
+          <ProtectedRoute>
+            {" "}
+            <ApplyLoanForm />
+          </ProtectedRoute>
+        ),
       },
     ],
   },
@@ -119,12 +130,19 @@ const router = createBrowserRouter([
       // explicit child routes (relative paths)
       {
         path: "my-profile",
-        element:<ProtectedRoute><UserProfile /></ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <UserProfile />
+          </ProtectedRoute>
+        ),
       },
       {
         path: "my-loan",
-        element: <ProtectedRoute><MyLoanByUser /></ProtectedRoute>,
-       
+        element: (
+          <ProtectedRoute>
+            <MyLoanByUser />
+          </ProtectedRoute>
+        ),
       },
       // keep the old dashboard overview (optional)
       {
@@ -137,15 +155,30 @@ const router = createBrowserRouter([
       },
       {
         path: "loan-applications",
-        element:  <AllLoanApplications />,
+        element: <AllLoanApplications />,
+      },
+            {
+        path: "loan-applications/update-loan-applications/:id",
+        element: <UpdateLoanApllicationsStatus />,
       },
       {
         path: "all-loan",
-        element:<AllLoan /> ,
+        element: <AllLoan />,
+       
+      },
+      {
+        path: "all-loan/update-loan/:id",
+        element: <UpdateLoansByAdmin />,
+       
       },
       {
         path: "manage-loans",
         element: <ManageLoans />,
+      },
+      {
+
+        path: "manage-users/update-user-role/:id", 
+        element: <UpdateUserRole />,
       },
       {
         path: "pending-loans",
@@ -157,7 +190,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-
 ]);
 
 export default router;

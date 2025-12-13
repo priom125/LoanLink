@@ -5,7 +5,7 @@ function LoanCard({ loanCategories }) {
   const loan = loanCategories || {}
 
   return (
-    <div className="bg-gray-900 border my-20 border-gray-800 shadow-2xl shadow-black/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/20 transform hover:scale-[1.01]">
+    <div className="bg-gray-900 border border-gray-800 shadow-2xl shadow-black/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/20 transform hover:scale-[1.01]">
       <div className="h-40 overflow-hidden">
         <img
           src={loan.display_url || '/placeholder.png'}

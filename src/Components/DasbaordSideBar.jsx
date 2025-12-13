@@ -1,6 +1,15 @@
 import React, { useContext } from "react";
 import { NavLink, Outlet } from "react-router";
-import { HandCoins, Handshake, Home, MonitorCog, StickyNote, User, UserCog } from "lucide-react";
+import {
+  BookCopy,
+  HandCoins,
+  Handshake,
+  Home,
+  MonitorCog,
+  StickyNote,
+  User,
+  UserCog,
+} from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../Auth/AuthProvider";
 import useAxios from "../hooks/useAxios";
@@ -11,17 +20,16 @@ function DasbaordSideBar() {
 
   const axiosInstance = useAxios();
 
-  const { data: userData = [], isLoading } = useQuery({ 
+  const { data: userData = [], isLoading } = useQuery({
     queryKey: ["user-data", user?.email],
     queryFn: async () => {
       const res = await axiosInstance.get(`/user-data?email=${user?.email}`);
       return res.data;
     },
-    enabled: !!user?.email, 
+    enabled: !!user?.email,
   });
-  
-  const Role = userData?.[0]?.role; 
 
+  const Role = userData?.[0]?.role;
 
   const defaultNavItems = (
     <>
@@ -31,57 +39,43 @@ function DasbaordSideBar() {
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
             data-tip="Homepage"
           >
-         
             <Home className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Home</span>
-          </button>
-        </NavLink>
-      </li>
-      <li>
-        <NavLink to="/dashboard/my-profile">
-          <button
-            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-            data-tip="My Profile"
-          >
-        
-            <User className="my-1.5 inline-block size-4 mr-2" />
-            <span className="is-drawer-close:hidden">My Profile</span>
           </button>
         </NavLink>
       </li>
     </>
   );
 
-
   const borrowerNavItems = (
-    <li>
-      <NavLink to="/dashboard/my-loan">
-        <button
-          className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          data-tip="My Loan"
-        >
-        
-          <HandCoins className="my-1.5 inline-block size-4 mr-2" />
-          <span className="is-drawer-close:hidden">My Loan</span>
-        </button>
-      </NavLink>
-    </li>
+    <>
+      <li>
+        <NavLink to="/dashboard/my-profile">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="My Profile"
+          >
+            <User className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">My Profile</span>
+          </button>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/dashboard/my-loan">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="My Loan"
+          >
+            <HandCoins className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">My Loan</span>
+          </button>
+        </NavLink>
+      </li>
+    </>
   );
   const adminNavItems = (
     <>
-    <li>
-      <NavLink to="/dashboard/loan-applications">
-        <button
-          className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-          data-tip="Loan Applications"
-        >
-        
-          <HandCoins className="my-1.5 inline-block size-4 mr-2" />
-          <span className="is-drawer-close:hidden">Loan Applications</span>
-        </button>
-      </NavLink>
-    </li>
-     <li>
+      <li>
         <NavLink to="/dashboard/manage-users">
           <button
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
@@ -93,22 +87,32 @@ function DasbaordSideBar() {
           </button>
         </NavLink>
       </li>
-     <li>
+
+      <li>
         <NavLink to="/dashboard/all-loan">
           <button
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
             data-tip="All Loans"
           >
             {/* Added mr-2 for spacing */}
-            <UserCog className="my-1.5 inline-block size-4 mr-2" />
+            <HandCoins className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">All Loans</span>
           </button>
         </NavLink>
       </li>
+      <li>
+        <NavLink to="/dashboard/loan-applications">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="Loan Applications"
+          >
+            <BookCopy  className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">Loan Applications</span>
+          </button>
+        </NavLink>
+      </li>
     </>
-    
   );
-
 
   const managerNavItems = (
     <>
@@ -118,13 +122,12 @@ function DasbaordSideBar() {
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
             data-tip="Add Loan"
           >
-         
             <StickyNote className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Add Loan</span>
           </button>
         </NavLink>
       </li>
-     
+
       <li>
         <NavLink to="/dashboard/manage-loans">
           <button
@@ -144,7 +147,7 @@ function DasbaordSideBar() {
             data-tip="Pending Loans"
           >
             {/* Added mr-2 for spacing */}
-            <HandCoins className="my-1.5 inline-block size-4 mr-2" /> 
+            <HandCoins className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Pending Loans</span>
           </button>
         </NavLink>
@@ -156,14 +159,25 @@ function DasbaordSideBar() {
             data-tip="Approved Loans"
           >
             {/* Added mr-2 for spacing */}
-            <Handshake className="my-1.5 inline-block size-4 mr-2" /> 
+            <Handshake className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Approved Loans</span>
+          </button>
+        </NavLink>
+      </li>
+      <li>
+        <NavLink to="/dashboard/my-profile">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="My Profile"
+          >
+            <User className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">My Profile</span>
           </button>
         </NavLink>
       </li>
     </>
   );
-  
+
   let roleSpecificItems = null;
 
   if (Role === "borrower") {
@@ -173,28 +187,29 @@ function DasbaordSideBar() {
   } else if (Role === "admin") {
     roleSpecificItems = adminNavItems;
   }
-  
+
   // (Loading State Block - Omitted for brevity, assumed to be the same)
 
   if (isLoading || !user) {
     return (
-        <div className="drawer lg:drawer-open">
-            <div className="drawer-content p-4">
-                <Loading />
-                <Outlet />
-            </div>
-            {/* Minimal sidebar for loading state */}
-            <div className="drawer-side">
-                <div className="flex min-h-full flex-col items-start bg-gray-900 text-white w-64">
-                    <ul className="menu w-full">
-                        <li><span className="loading loading-dots loading-lg"></span></li>
-                    </ul>
-                </div>
-            </div>
+      <div className="drawer lg:drawer-open">
+        <div className="drawer-content p-4">
+          <Loading />
+          <Outlet />
         </div>
+        {/* Minimal sidebar for loading state */}
+        <div className="drawer-side">
+          <div className="flex min-h-full flex-col items-start bg-gray-900 text-white w-64">
+            <ul className="menu w-full">
+              <li>
+                <span className="loading loading-dots loading-lg"></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     );
   }
-
 
   return (
     <div className="drawer lg:drawer-open">

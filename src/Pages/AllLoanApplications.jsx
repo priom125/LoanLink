@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react'; // Import useState
 import useAxios from '../hooks/useAxios';
+import { NavLink } from 'react-router';
 
 function AllLoanApplications() {
     const axiosInstance = useAxios();
@@ -109,7 +110,7 @@ function AllLoanApplications() {
                                         </span>
                                     </td>
                                     <td className="space-x-2">
-                                        <button className="btn btn-info btn-sm">View</button>
+                                        <NavLink to={`update-loan-applications/${loan._id}`} className="btn btn-info btn-sm">View</NavLink>
                                         {/* Add specific actions based on status here, e.g., Approve/Reject buttons if status is 'Pending' */}
                                     </td>
                                 </tr>

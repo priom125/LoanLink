@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from 'react-router';
 import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
 
@@ -48,7 +49,7 @@ function ManageLoans() {
 
               <td>{loan.category}</td>
               <td className="space-x-2">
-                <button className="btn btn-success btn-sm">Update</button>
+                <NavLink to={`update-user-role/${loan._id}`} className="btn btn-success btn-sm">Update</NavLink>
                 <button className="btn btn-error btn-sm">Delete</button>
               </td>
             </tr>
