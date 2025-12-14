@@ -164,11 +164,17 @@ const router = createBrowserRouter([
       {
         path: "all-loan",
         element: <AllLoan />,
+ 
        
       },
       {
         path: "all-loan/update-loan/:id",
         element: <UpdateLoansByAdmin />,
+        loader: async ({ params }) => {
+          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          return res.json();
+        },
+        hydrateFallbackElement: <Loading />,
        
       },
       {
@@ -179,6 +185,11 @@ const router = createBrowserRouter([
 
         path: "manage-users/update-user-role/:id", 
         element: <UpdateUserRole />,
+        loader: async ({ params }) => {
+          const res = await fetch(`http://localhost:3000/user/${params.id}`);
+          return res.json();
+        },
+        hydrateFallbackElement: <Loading />,
       },
       {
         path: "pending-loans",

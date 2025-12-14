@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import useAxios from '../hooks/useAxios';
 import { NavLink } from 'react-router';
+import AddUserByAdmin from '../Components/AddUserByAdmin';
 
 function ManagerDashBoard() {
   const axiosInstance = useAxios();
@@ -15,6 +16,7 @@ function ManagerDashBoard() {
 
   return (
     <div className="overflow-x-auto">
+      <AddUserByAdmin />
       <table className="table">
         {/* head */}
         <thead>
