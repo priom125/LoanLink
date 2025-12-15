@@ -31,6 +31,9 @@ import UpdateUserRole from "../Pages/UpdateUserRole";
 import UpdateLoansByAdmin from "../Pages/UpdateLoansByAdmin";
 import UpdateLoanApllicationsStatus from "../Pages/UpdateLoanApllicationsStatus";
 import UpdateLoansByManager from "../Pages/UpdateLoansByManager";
+import BorrowerProtectedRoutes from "./BorrowerProtectedRoutes";
+import AdminProtectedRoutes from "./AdminProtectedRoutes";
+import ManagerProtectedRoutes from "./ManagerProtectedRoutes";
 
 const router = createBrowserRouter([
   {
@@ -132,59 +135,70 @@ const router = createBrowserRouter([
       {
         path: "my-profile",
         element: (
-          <ProtectedRoute>
+         
             <UserProfile />
-          </ProtectedRoute>
+     
         ),
       },
       {
         path: "my-loan",
-        element: (
-          <ProtectedRoute>
-            <MyLoanByUser />
-          </ProtectedRoute>
-        ),
+        element: <BorrowerProtectedRoutes>
+          <MyLoanByUser />
+        </BorrowerProtectedRoutes>,
       },
       // keep the old dashboard overview (optional)
       {
         path: "add-loan",
-        element: <AddLoanByManager />,
+        element: <ManagerProtectedRoutes>
+          <AddLoanByManager />
+        </ManagerProtectedRoutes>,
       },
       {
         path: "manage-users",
-        element: <ManagerDashBoard />,
+        element: <AdminProtectedRoutes>
+          <ManagerDashBoard />
+        </AdminProtectedRoutes>,
       },
       {
         path: "loan-applications",
-        element: <AllLoanApplications />,
+        element: <AdminProtectedRoutes>
+          <AllLoanApplications />
+        </AdminProtectedRoutes>,
       },
-            {
+      {
         path: "loan-applications/update-loan-applications/:id",
-        element: <UpdateLoanApllicationsStatus />,
+        element: <AdminProtectedRoutes>
+          <UpdateLoanApllicationsStatus />
+        </AdminProtectedRoutes>,
       },
       {
         path: "all-loan",
-        element: <AllLoan />,
- 
-       
+        element: <AdminProtectedRoutes>
+          <AllLoan />
+        </AdminProtectedRoutes>,
       },
       {
         path: "all-loan/update-loan/:id",
-        element: <UpdateLoansByAdmin />,
+        element: (
+          <AdminProtectedRoutes>
+            <UpdateLoansByAdmin />
+          </AdminProtectedRoutes>
+        ),
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
-       
       },
       {
         path: "manage-loans",
-        element: <ManageLoans />,
+        element:  <ManagerProtectedRoutes> <ManageLoans /></ManagerProtectedRoutes>,
       },
       {
         path: "manage-loans/update-user-role/:id",
-        element: <UpdateLoansByManager />,
+        element: <ManagerProtectedRoutes>
+          <UpdateLoansByManager />
+        </ManagerProtectedRoutes>,
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
@@ -192,9 +206,10 @@ const router = createBrowserRouter([
         hydrateFallbackElement: <Loading />,
       },
       {
-
-        path: "manage-users/update-user-role/:id", 
-        element: <UpdateUserRole />,
+        path: "manage-users/update-user-role/:id",
+        element: <AdminProtectedRoutes>
+          <UpdateUserRole />
+        </AdminProtectedRoutes>,
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/user/${params.id}`);
           return res.json();
@@ -203,11 +218,15 @@ const router = createBrowserRouter([
       },
       {
         path: "pending-loans",
-        element: <PendingLoan />,
+        element: <ManagerProtectedRoutes>
+          <PendingLoan />
+        </ManagerProtectedRoutes>,
       },
       {
         path: "approved-loans",
-        element: <ApprovedLoans />,
+        element: <ManagerProtectedRoutes>
+          <ApprovedLoans />
+        </ManagerProtectedRoutes>,
       },
     ],
   },

@@ -41,7 +41,7 @@ function UserProfile() {
   const Role = userData[0]?.role;
   const Name = userData[0]?.name;
   const PhotoUrl = userData[0]?.photoURL;
-
+ 
   const handleLogout = () => {
     logOut()
       .then(() => {

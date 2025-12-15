@@ -1,25 +1,22 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import useAxios from '../hooks/useAxios';
-// NavLink is imported but not used in the final display logic, but kept for completeness.
-// import { NavLink } from 'react-router'; 
 
-// 1. New Modal Component (can be placed in a separate file, but kept here for simplicity)
 const LoanDetailsModal = ({ loan, onClose }) => {
-    // If no loan is passed or loan is null, don't render the modal
+
     if (!loan) return null;
 
-    // A utility function to format the loan status badge style
+
     const getStatusClass = (status) => {
         if (status === 'Approved') return 'bg-green-500';
         if (status === 'Rejected') return 'bg-red-500';
-        return 'bg-yellow-500'; // Pending
+        return 'bg-yellow-500'; 
     };
 
     return (
-        // The main modal container (fixed position, covering the screen)
+      
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950 bg-opacity-50" onClick={onClose}>
-            {/* Modal content area, stops click propagation from closing the modal accidentally */}
+        
             <div className="bg-white rounded-xl shadow-2xl p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 
                 <div className="flex justify-between items-start mb-4">
@@ -43,7 +40,7 @@ const LoanDetailsModal = ({ loan, onClose }) => {
                             <p className="font-semibold text-lg text-blue-600 mb-1">Applicant Information</p>
                             <p><strong>Name:</strong> {loan.firstName} {loan.lastName}</p>
                             <p><strong>Email:</strong> {loan.userEmail}</p>
-                            {/* Assuming these fields exist in your loan object */}
+                    
                             <p><strong>Phone:</strong> {loan.phone || 'N/A'}</p> 
                             <p><strong>Address:</strong> {loan.address || 'N/A'}</p> 
                         </div>
@@ -62,11 +59,10 @@ const LoanDetailsModal = ({ loan, onClose }) => {
                          <span className={`px-3 py-1 text-sm font-bold text-white rounded-full ${getStatusClass(loan.status)} shadow-md`}>
                             {loan.status}
                          </span>
-                         {/* Optional: Show reviewer notes if available */}
+            
                          {loan.notes && <p className="mt-2 text-gray-600"><strong>Notes:</strong> {loan.notes}</p>}
                     </div>
 
-                    {/* Add more fields here as needed (e.g., documents, submission date, etc.) */}
                 </div>
 
                 <div className="mt-6 text-right">
@@ -86,10 +82,10 @@ const LoanDetailsModal = ({ loan, onClose }) => {
 function AllLoanApplications() {
     const axiosInstance = useAxios();
 
-    // 1. State for the current filter status (default is to show all)
+
     const [filterStatus, setFilterStatus] = useState('All'); 
     
-    // 2. State for the modal: stores the loan data to display in the modal
+
     const [selectedLoan, setSelectedLoan] = useState(null); 
 
     const { data: AllLoan = [], isLoading, isError } = useQuery({
@@ -100,27 +96,25 @@ function AllLoanApplications() {
         },
     });
 
-    // 3. Filter the loans based on the selected status
+
     const filteredLoans = AllLoan.filter(loan => {
         if (filterStatus === 'All') {
             return true; // Show all loans
         }
-        // Filter by the selected status (Pending, Approved, Rejected)
+
         return loan.status === filterStatus;
     });
 
-    // 4. Handler for opening the modal
     const handleViewDetails = (loan) => {
         setSelectedLoan(loan);
     };
 
-    // 5. Handler for closing the modal
     const handleCloseModal = () => {
         setSelectedLoan(null);
     };
 
 
-    // Handle loading and error states for a better user experience
+
     if (isLoading) {
         return <div className="text-center py-8">Loading loan applications...</div>;
     }
@@ -129,19 +123,19 @@ function AllLoanApplications() {
         return <div className="text-center py-8 text-red-600">Error fetching loan applications.</div>;
     }
 
-    // Helper array for filter buttons
+
     const statuses = ['All', 'Pending', 'Approved', 'Rejected'];
 
     return (
         <div className="p-4">
             
-            {/* Filter Buttons/Tabs */}
+
             <div className="flex space-x-4 mb-6 justify-start">
                 {statuses.map(status => (
                     <button
                         key={status}
                         onClick={() => setFilterStatus(status)}
-                        // Highlight the currently active filter button
+               
                         className={`px-4 py-2 rounded-lg font-semibold transition-colors duration-200 ${
                             filterStatus === status 
                                 ? 'bg-blue-600 text-white shadow-md' 
@@ -149,7 +143,7 @@ function AllLoanApplications() {
                         }`}
                     >
                         {status} 
-                        {/* Optional: Show count for visual feedback (e.g., Pending (5)) */}
+               
                         <span className="ml-1 text-sm font-normal">
                             ({AllLoan.filter(loan => status === 'All' ? true : loan.status === status).length})
                         </span>
@@ -182,7 +176,7 @@ function AllLoanApplications() {
                             filteredLoans.map((loan) => (
                                 <tr key={loan._id}>
                                     <td>
-                                        Loan ID: {loan._id.substring(0, 8)}... {/* Truncate for display */}
+                                        Loan ID: {loan._id.substring(0, 8)}...
                                     </td>
                                     <td>
                                         <div>
