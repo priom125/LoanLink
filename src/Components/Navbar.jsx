@@ -17,8 +17,10 @@ const {data:userData = []} = useQuery({
     },
     enabled: !!user?.email,
 });
+console.log("Navbar userData:", userData);
   // support both shapes: array (from API) or single object
   const Role = Array.isArray(userData) ? userData[0]?.role : userData?.role;
+  console.log("Navbar Role:", Role);
   let dashboardPath = '/dashboard';
   if (Role === 'manager') dashboardPath = '/dashboard/manage-loans';
   else if (Role === 'admin') dashboardPath = '/dashboard/manage-users';

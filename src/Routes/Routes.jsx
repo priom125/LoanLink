@@ -30,6 +30,7 @@ import ApplyLoan from "../Pages/ApplyLoan";
 import UpdateUserRole from "../Pages/UpdateUserRole";
 import UpdateLoansByAdmin from "../Pages/UpdateLoansByAdmin";
 import UpdateLoanApllicationsStatus from "../Pages/UpdateLoanApllicationsStatus";
+import UpdateLoansByManager from "../Pages/UpdateLoansByManager";
 
 const router = createBrowserRouter([
   {
@@ -180,6 +181,15 @@ const router = createBrowserRouter([
       {
         path: "manage-loans",
         element: <ManageLoans />,
+      },
+      {
+        path: "manage-loans/update-user-role/:id",
+        element: <UpdateLoansByManager />,
+        loader: async ({ params }) => {
+          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          return res.json();
+        },
+        hydrateFallbackElement: <Loading />,
       },
       {
 

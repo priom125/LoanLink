@@ -90,6 +90,8 @@ const AddLoanByManager = () => {
     enabled: !!user?.email,
   });
 
+  console.log('fetched user data:', userData);
+
   const role = Array.isArray(userData) ? userData[0]?.role : userData?.role;
   console.log('user role:', role);
 

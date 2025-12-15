@@ -106,7 +106,7 @@ function DasbaordSideBar() {
             className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
             data-tip="Loan Applications"
           >
-            <BookCopy  className="my-1.5 inline-block size-4 mr-2" />
+            <BookCopy className="my-1.5 inline-block size-4 mr-2" />
             <span className="is-drawer-close:hidden">Loan Applications</span>
           </button>
         </NavLink>

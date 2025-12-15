@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useAxios from '../hooks/useAxios';
 import { useQuery } from '@tanstack/react-query';
 
 function PendingLoan() {
+
+
+  const [selectedLoan, setSelectedLoan] = useState(null);
+
   const axiosInstance = useAxios();
 
-const {data:pendingLoan = []} = useQuery({
+const {data:pendingLoan = [],refetch} = useQuery({
     queryKey: ['pendingLoan', ],
     queryFn: async () => {
         const res = await axiosInstance.get("pending-loan");
@@ -13,7 +17,42 @@ const {data:pendingLoan = []} = useQuery({
     },
 });
 
-console.log(pendingLoan);
+// console.log(pendingLoan);
+
+
+const handleApprove = async (id) => {
+  try {
+    await axiosInstance.patch(`update-loan/${id}`, {
+      status: "Approved",
+    });
+
+    refetch(); // 🔥 Auto refresh data
+  } catch (error) {
+    console.error(
+      "Error approving loan:",
+      error.response?.data || error.message
+    );
+  }
+};
+
+
+
+
+
+const handleReject = async (id) => {
+try {
+    await axiosInstance.patch(`update-loan/${id}`, {
+      status: "Rejected",
+    });
+
+    refetch(); // 🔥 Auto refresh data
+  } catch (error) {
+    console.error(
+      "Error approving loan:",
+      error.response?.data || error.message
+    );
+  }
+}
 
   return (
         <div className="overflow-x-auto">
@@ -48,12 +87,35 @@ console.log(pendingLoan);
 
               <td>Date : {loan.submissionDate}</td>
               <td className="space-x-2">
-                <button className="btn btn-success btn-sm">Update</button>
-                <button className="btn btn-error btn-sm">Delete</button>
+                <button className="btn btn-success btn-sm" onClick={() => handleApprove(loan._id)}>Approve</button>
+                <button className="btn btn-error btn-sm" onClick={() => handleReject(loan._id)}>Reject</button>
+                <button className="btn  btn-sm"  onClick={() => setSelectedLoan(loan)}>View</button>
               </td>
             </tr>
           ))}
         </tbody>
+        {selectedLoan && (
+  <dialog open className="modal">
+    <div className="modal-box">
+      <h3 className="font-bold text-lg mb-2">Loan Details</h3>
+
+      <p><strong>Name:</strong> {selectedLoan.firstName}</p>
+      <p><strong>Email:</strong> {selectedLoan.userEmail}</p>
+      <p><strong>Amount:</strong> {selectedLoan.loanAmount} BDT</p>
+      <p><strong>Status:</strong> {selectedLoan.status}</p>
+
+      <div className="modal-action">
+        <button
+          className="btn"
+          onClick={() => setSelectedLoan(null)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
+
       </table>
     </div>
   )
