@@ -1,10 +1,21 @@
-import React from 'react'
-import { Link, useSearchParams } from 'react-router';
+import React, { useEffect } from 'react'
+import { Link, NavLink, useSearchParams } from 'react-router';
+import useAxios from '../hooks/useAxios';
 
 function PaymentDone() {
 
+  const axiosInstance = useAxios();
+
     const [searchParams] = useSearchParams();
   const sessionId = searchParams.get('session_id');
+  // console.log(sessionId)
+
+  useEffect(() => {
+    if(sessionId){
+      axiosInstance.patch(`payments-success?session_id=${sessionId}`,)
+    }
+
+  },[sessionId,axiosInstance])
   return (
    <div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center border border-gray-100">
@@ -54,7 +65,7 @@ function PaymentDone() {
         {/* Action Buttons */}
         <div className="space-y-3">
           <Link 
-            to="/dashboard/my-loans" 
+            to="my-loan" 
             className="block w-full bg-green-600 text-white font-semibold py-3 rounded-xl hover:bg-green-700 transition duration-200 shadow-md"
           >
             View My Applications
