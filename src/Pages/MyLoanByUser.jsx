@@ -1,159 +1,246 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../Auth/AuthProvider'
-import useAxios from '../hooks/useAxios';
-import { useQuery } from '@tanstack/react-query';
-
+import React, { useContext, useState } from "react";
+import { AuthContext } from "../Auth/AuthProvider";
+import useAxios from "../hooks/useAxios";
+import { useQuery } from "@tanstack/react-query";
+import { NavLink } from "react-router";
 
 function MyLoanByUser() {
+  const [selectedLoan, setSelectedLoan] = useState(null); // For General Details
+  const [loanToCancel, setLoanToCancel] = useState(null); // For Cancel Confirmation
+  const [receiptLoan, setReceiptLoan] = useState(null); // For Payment Receipt
 
-   const [selectedLoan, setSelectedLoan] = useState(null);
-   const [loanToCancel, setLoanToCancel] = useState(null);
+  const { user } = useContext(AuthContext);
+  const axiosInstance = useAxios();
 
-
-const {user} = useContext(AuthContext);
-const axiosInstance = useAxios();
-
-const {data:myLoan = [],refetch} = useQuery({
-    queryKey: ['my-loans', user?.email],
+  const { data: myLoans = [], refetch } = useQuery({
+    queryKey: ["my-loans", user?.email],
     queryFn: async () => {
-        const res = await axiosInstance.get(`/my-loan?email=${user?.email}`);
-        return res.data;
+      const res = await axiosInstance.get(`/my-loan?email=${user?.email}`);
+      return res.data;
     },
-});
+    enabled: !!user?.email,
+  });
 
-console.log(myLoan);
-
-const handleCancel = async (id) => {
-  try {
-    await axiosInstance.delete(`cancel-loan/${id}`);
-    refetch();
-  } catch (error) {
-    console.error(
-      "Error canceling loan:",
-      error.response?.data || error.message
-    );
-  }
-};
-
+  const handleCancel = async (id) => {
+    try {
+      await axiosInstance.delete(`cancel-loan/${id}`);
+      refetch();
+    } catch (error) {
+      console.error("Error canceling loan:", error);
+    }
+  };
 
   return (
-<div className="overflow-x-auto">
-  <table className="table">
-    {/* head */}
-    <thead>
-      <tr>
-        
-        <th>Loan Id</th>
-        <th>Loan Info</th>
-        <th>Amount</th>
-        <th>Status</th>
-        <th>Action</th>
-      </tr>
-    </thead>
-    <tbody>
-      {/* row 1 */}
-      {myLoan.map((loan) => (
-        <tr key={loan._id}>
-          <td>{loan._id}</td>
-          <td>
-            <div className="font-bold">{loan.loanTitle}</div>
-            <div className="text-sm opacity-50">{loan.loanCategory}</div>
-          </td>
-          <td>${loan.loanAmount}</td>
-          <td>
-            {loan.status === 'approved' ? (
-              <span className="badge badge-success">Approved</span>
-            ) : (
-              <span className="badge badge-warning">Pending</span>
-            )}
-          </td>
-          <td className="space-x-2">
-            <button className="btn btn-primary btn-sm" onClick={() => setSelectedLoan(loan)}>View Details</button>
-      {
-  loan.status === 'Pending' && (
-    <button
-      className="btn btn-error btn-sm"
-      onClick={() => setLoanToCancel(loan)}
-    >
-      Cancel
-    </button>
-  )
+    <div className="p-6">
+      <h2 className="text-2xl font-bold mb-6">My Loan Applications</h2>
+
+      <div className="overflow-x-auto bg-white rounded-lg shadow">
+        <table className="table w-full">
+          <thead>
+            <tr className="bg-gray-100">
+              <th>Loan ID</th>
+              <th>Loan Info</th>
+              <th>Amount</th>
+              <th>Fee Status</th>
+              <th>Application Status</th>
+              <th className="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {myLoans.map((loan) => (
+              <tr key={loan._id} className="hover">
+                <td className="font-bold">
+                 {loan._id}
+                 
+                </td>
+                <td className="font-bold">
+                 {loan.loanTitle}
+                 
+                </td>
+                <td className="font-semibold">${loan.loanAmount}</td>
+
+                {/* Payment Status Column */}
+                <td>
+                  {loan.paymentStatus === "Paid" ? (
+                    <button
+                      onClick={() => setReceiptLoan(loan)}
+                      className="btn btn-xs btn-outline btn-success normal-case"
+                    >
+                      ✅ Paid
+                    </button>
+                  ) : (
+                    <NavLink to={`/dashboard/payment/${loan._id}`}>
+                      <button className="btn btn-xs btn-warning normal-case">
+                        Unpaid (Pay $10)
+                      </button>
+                    </NavLink>
+                  )}
+                </td>
+
+                {/* Application Status */}
+                <td>
+                  <span
+                    className={`badge badge-sm ${
+                      loan.status === "approved"
+                        ? "badge-success"
+                        : loan.status === "pending"
+                        ? "badge-warning"
+                        : "badge-ghost"
+                    }`}
+                  >
+                    {loan.status}
+                  </span>
+                </td>
+
+                {/* Action Buttons */}
+                <td className="space-x-2">
+                  <button
+                    className="btn btn-primary btn-sm"
+                    onClick={() => setSelectedLoan(loan)}
+                  >
+                    View Details
+                  </button>
+                  {loan.status === "Pending" && (
+                    <button
+                      className="btn btn-error btn-sm"
+                      onClick={() => setLoanToCancel(loan)}
+                    >
+                      Cancel
+                    </button>
+                  )}
+
+                  <NavLink to={`/dashboard/payment/${loan._id}`}>
+                      <button className="btn btn-success">
+                        Pay
+                      </button>
+                    </NavLink>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* --- MODALS --- */}
+
+      {/* 1. General Details Modal */}
+      {selectedLoan && (
+        <dialog open className="modal modal-bottom sm:modal-middle">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg border-b pb-2 mb-4">
+              Application Details
+            </h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <p>
+                <strong>Name:</strong> {selectedLoan.firstName}{" "}
+                {selectedLoan.lastName}
+              </p>
+              <p>
+                <strong>Email:</strong> {selectedLoan.userEmail}
+              </p>
+              <p>
+                <strong>Contact:</strong> {selectedLoan.contactNumber}
+              </p>
+              <p>
+                <strong>Category:</strong> {selectedLoan.category}
+              </p>
+            </div>
+            <div className="modal-action">
+              <button className="btn" onClick={() => setSelectedLoan(null)}>
+                Close
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* 2. Cancellation Modal */}
+      {loanToCancel && (
+        <dialog open className="modal">
+          <div className="modal-box border-t-4 border-error">
+            <h3 className="font-bold text-lg text-error">
+              Cancel Application?
+            </h3>
+            <p className="py-4 text-gray-600">
+              Are you sure? This action cannot be undone.
+            </p>
+            <div className="modal-action">
+              <button
+                className="btn btn-ghost"
+                onClick={() => setLoanToCancel(null)}
+              >
+                No, Keep it
+              </button>
+              <button
+                className="btn btn-error text-white"
+                onClick={async () => {
+                  await handleCancel(loanToCancel._id);
+                  setLoanToCancel(null);
+                }}
+              >
+                Yes, Cancel
+              </button>
+            </div>
+          </div>
+        </dialog>
+      )}
+
+      {/* 3. Payment Receipt Modal (Triggered by Paid Badge) */}
+      {receiptLoan && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
+          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl relative">
+            <div className="text-center mb-6">
+              <div className="bg-green-100 text-green-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="3"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold">Payment Receipt</h3>
+              <p className="text-sm text-gray-500 underline uppercase tracking-widest">
+                Successful
+              </p>
+            </div>
+
+            <div className="space-y-4 text-sm border-t border-dashed pt-4">
+              <div className="flex justify-between">
+                <span className="text-gray-500">Transaction ID:</span>
+                <span className="font-mono text-xs">
+                  {receiptLoan.transactionId || "TRX_9823471"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Amount:</span>
+                <span className="font-bold text-green-600">$10.00 USD</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-gray-500">Date:</span>
+                <span className="font-medium">
+                  {new Date().toLocaleDateString()}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => setReceiptLoan(null)}
+              className="mt-8 w-full bg-gray-900 text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition"
+            >
+              Done
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
-            <button className="btn btn-success btn-sm">Pay</button>
-          </td>
-        </tr>
-      ))}
-
-    </tbody>
-     {selectedLoan && (
-  <dialog open className="modal">
-    <div className="modal-box">
-      <h3 className="font-bold text-lg mb-2">Loan Details</h3>
-
-      <p><strong>Name:</strong> {selectedLoan.firstName}</p>
-      <p><strong>Email:</strong> {selectedLoan.userEmail}</p>
-      <p><strong>Amount:</strong> {selectedLoan.loanAmount} BDT</p>
-      <p><strong>Status:</strong> {selectedLoan.status}</p>
-      <p><strong>Contact Number:</strong> {selectedLoan.contactNumber}</p>
-      <p><strong>Loan Title:</strong> {selectedLoan.loanTitle}</p>
-      <p><strong>Interest Rate:</strong> {selectedLoan.interestRate}</p>
-
-
-      <div className="modal-action">
-        <button
-          className="btn"
-          onClick={() => setSelectedLoan(null)}
-        >
-          Close
-        </button>
-      </div>
-    </div>
-  </dialog>
-)}
-
-{loanToCancel && (
-  <dialog open className="modal">
-    <div className="modal-box">
-      <h3 className="font-bold text-lg text-error mb-2">
-        Confirm Cancellation
-      </h3>
-
-      <p className="mb-4">
-        Are you sure you want to cancel this loan?
-      </p>
-
-      <div className="bg-base-200 p-3 rounded mb-4">
-        <p><strong>Loan:</strong> {loanToCancel.loanTitle}</p>
-        <p><strong>Amount:</strong> {loanToCancel.loanAmount} BDT</p>
-      </div>
-
-      <div className="modal-action">
-        <button
-          className="btn"
-          onClick={() => setLoanToCancel(null)}
-        >
-          No
-        </button>
-
-        <button
-          className="btn btn-error"
-          onClick={async () => {
-            await handleCancel(loanToCancel._id);
-            setLoanToCancel(null);
-          }}
-        >
-          Yes, Cancel Loan
-        </button>
-      </div>
-    </div>
-  </dialog>
-)}
-
-
-  </table>
-</div>
-  )
-}
-
-export default MyLoanByUser
+export default MyLoanByUser;

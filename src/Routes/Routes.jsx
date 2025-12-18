@@ -34,6 +34,10 @@ import UpdateLoansByManager from "../Pages/UpdateLoansByManager";
 import BorrowerProtectedRoutes from "./BorrowerProtectedRoutes";
 import AdminProtectedRoutes from "./AdminProtectedRoutes";
 import ManagerProtectedRoutes from "./ManagerProtectedRoutes";
+import Payment from "../Pages/Payment";
+
+import PaymentDone from "../Pages/PaymentDone";
+import PaymentCancel from "../Pages/PaymentCancel";
 
 const router = createBrowserRouter([
   {
@@ -145,6 +149,20 @@ const router = createBrowserRouter([
         element: <BorrowerProtectedRoutes>
           <MyLoanByUser />
         </BorrowerProtectedRoutes>,
+      },
+      {
+        path: "payment/:id",
+        element: <BorrowerProtectedRoutes>
+          <Payment />
+        </BorrowerProtectedRoutes>,
+      },
+      {
+        path: "payments-success",
+       element: <PaymentDone/>
+      },
+      {
+        path: "payments-cancel",
+       element: <PaymentCancel/>
       },
       // keep the old dashboard overview (optional)
       {
