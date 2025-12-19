@@ -29,13 +29,14 @@ function MyLoanByUser() {
     enabled: !!user?.email,
   });
 
+  console.log(myLoans)
   const paymentData = payments;
 
   const getPaymentByLoanId = (loanId) => {
     return payments.find((payment) => payment.loanID === loanId);
   };
 
-  console.log(paymentData);
+  // console.log(paymentData);
 
   const handleCancel = async (id) => {
     try {
