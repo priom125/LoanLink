@@ -20,6 +20,22 @@ function MyLoanByUser() {
     },
     enabled: !!user?.email,
   });
+  const { data: payments = [] } = useQuery({
+    queryKey: ["payments", user?.email],
+    queryFn: async () => {
+      const res = await axiosInstance.get(`/my-payments?email=${user?.email}`);
+      return res.data;
+    },
+    enabled: !!user?.email,
+  });
+
+  const paymentData = payments;
+
+  const getPaymentByLoanId = (loanId) => {
+    return payments.find((payment) => payment.loanID === loanId);
+  };
+
+  console.log(paymentData);
 
   const handleCancel = async (id) => {
     try {
@@ -40,7 +56,7 @@ function MyLoanByUser() {
             <tr className="bg-gray-100">
               <th>Loan ID</th>
               <th>Loan Info</th>
-              <th>Amount</th>
+
               <th>Fee Status</th>
               <th>Application Status</th>
               <th className="text-center">Actions</th>
@@ -49,21 +65,19 @@ function MyLoanByUser() {
           <tbody>
             {myLoans.map((loan) => (
               <tr key={loan._id} className="hover">
-                <td className="font-bold">
-                 {loan._id}
-                 
-                </td>
-                <td className="font-bold">
-                 {loan.loanTitle}
-                 
-                </td>
-                <td className="font-semibold">${loan.loanAmount}</td>
+                <td className="font-bold">{loan._id}</td>
+                <td className="font-bold">{loan.loanTitle}</td>
 
                 {/* Payment Status Column */}
                 <td>
                   {loan.paymentStatus === "Paid" ? (
                     <button
-                      onClick={() => setReceiptLoan(loan)}
+                      onClick={() => {
+                        const payment = getPaymentByLoanId(loan._id);
+                        if (payment) {
+                          setReceiptLoan(payment);
+                        }
+                      }}
                       className="btn btn-xs btn-outline btn-success normal-case"
                     >
                       ✅ Paid
@@ -110,10 +124,8 @@ function MyLoanByUser() {
                   )}
 
                   <NavLink to={`/dashboard/payment/${loan._id}`}>
-                      <button className="btn btn-success">
-                        Pay
-                      </button>
-                    </NavLink>
+                    <button className="btn btn-success">Pay</button>
+                  </NavLink>
                 </td>
               </tr>
             ))}
@@ -187,54 +199,37 @@ function MyLoanByUser() {
 
       {/* 3. Payment Receipt Modal (Triggered by Paid Badge) */}
       {receiptLoan && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50 animate-fadeIn">
-          <div className="bg-white rounded-2xl max-w-sm w-full p-8 shadow-2xl relative">
-            <div className="text-center mb-6">
-              <div className="bg-green-100 text-green-600 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="3"
-                    d="M5 13l4 4L19 7"
-                  ></path>
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold">Payment Receipt</h3>
-              <p className="text-sm text-gray-500 underline uppercase tracking-widest">
-                Successful
-              </p>
-            </div>
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
+            <h3 className="text-xl font-bold text-center mb-4">
+              Payment Receipts
+            </h3>
 
-            <div className="space-y-4 text-sm border-t border-dashed pt-4">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Transaction ID:</span>
-                <span className="font-mono text-xs">
-                  {receiptLoan.transactionId || "TRX_9823471"}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Amount:</span>
-                <span className="font-bold text-green-600">$10.00 USD</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-gray-500">Date:</span>
-                <span className="font-medium">
-                  {new Date().toLocaleDateString()}
-                </span>
+            <div className="space-y-4 max-h-80 overflow-y-auto">
+              <div className="border rounded-lg p-4 text-sm space-y-1">
+                <p>
+                  <strong>Transaction ID:</strong> {receiptLoan.transactionID}
+                </p>
+                <p>
+                  <strong>Email:</strong> {receiptLoan.customerEmail}
+                </p>
+                <p>
+                  <strong>Amount:</strong> $10.00
+                </p>
+                <p>
+                  <strong>Payment Status:</strong> {receiptLoan.paymentStatus}
+                </p>
+                <p>
+                  <strong>Date:</strong> {receiptLoan.paidAt}
+                </p>
               </div>
             </div>
 
             <button
               onClick={() => setReceiptLoan(null)}
-              className="mt-8 w-full bg-gray-900 text-white py-3 rounded-xl font-semibold hover:bg-gray-800 transition"
+              className="mt-6 w-full btn btn-neutral"
             >
-              Done
+              Close
             </button>
           </div>
         </div>

@@ -12,7 +12,10 @@ function PaymentDone() {
 
   useEffect(() => {
     if(sessionId){
-      axiosInstance.patch(`payments-success?session_id=${sessionId}`,)
+      axiosInstance.patch(`/payments-success?session_id=${sessionId}`)
+      .then(res => {
+        console.log(res.data)
+      })
     }
 
   },[sessionId,axiosInstance])
