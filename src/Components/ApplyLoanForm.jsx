@@ -16,6 +16,7 @@ function ApplyLoanForm() {
     loanTitle: loanCategories?.loanTitle || 'N/A',
     interestRate: loanCategories?.interestRate ? `${loanCategories.interestRate}%` : 'N/A',
     status: 'Pending',
+    paymentStatus:'Unpaid',
     userEmail: user?.email || '',
     category: loanCategories.category || ''
   };

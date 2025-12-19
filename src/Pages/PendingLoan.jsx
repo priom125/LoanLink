@@ -17,7 +17,7 @@ const {data:pendingLoan = [],refetch} = useQuery({
     },
 });
 
-// console.log(pendingLoan);
+console.log(pendingLoan);
 
 
 const handleApprove = async (id) => {
@@ -26,7 +26,7 @@ const handleApprove = async (id) => {
       status: "Approved",
     });
 
-    refetch(); // 🔥 Auto refresh data
+    refetch(); 
   } catch (error) {
     console.error(
       "Error approving loan:",
@@ -45,7 +45,7 @@ try {
       status: "Rejected",
     });
 
-    refetch(); // 🔥 Auto refresh data
+    refetch(); 
   } catch (error) {
     console.error(
       "Error approving loan:",

@@ -5,9 +5,31 @@ import { useQuery } from "@tanstack/react-query";
 import { NavLink } from "react-router";
 
 function MyLoanByUser() {
-  const [selectedLoan, setSelectedLoan] = useState(null); // For General Details
-  const [loanToCancel, setLoanToCancel] = useState(null); // For Cancel Confirmation
-  const [receiptLoan, setReceiptLoan] = useState(null); // For Payment Receipt
+  const [selectedLoan, setSelectedLoan] = useState(null); 
+  const [loanToCancel, setLoanToCancel] = useState(null); 
+  const [receiptLoan, setReceiptLoan] = useState(null); 
+  const [isCanceling, setIsCanceling] = useState(false);
+
+const handleCancel = async (id) => {
+  setIsCanceling(true);
+  try {
+    const res = await axiosInstance.delete(`cancel-loan/${id}`);
+    
+    if (res.status === 200) {
+     
+      await refetch();
+      
+      setLoanToCancel(null);
+     
+      
+    }
+  } catch (error) {
+    console.error("Error canceling loan:", error);
+    // toast.error("Failed to cancel application");
+  } finally {
+    setIsCanceling(false);
+  }
+};
 
   const { user } = useContext(AuthContext);
   const axiosInstance = useAxios();
@@ -38,14 +60,14 @@ function MyLoanByUser() {
 
   // console.log(paymentData);
 
-  const handleCancel = async (id) => {
-    try {
-      await axiosInstance.delete(`cancel-loan/${id}`);
-      refetch();
-    } catch (error) {
-      console.error("Error canceling loan:", error);
-    }
-  };
+  // const handleCancel = async (id) => {
+  //   try {
+  //     await axiosInstance.delete(`cancel-loan/${id}`);
+  //     refetch();
+  //   } catch (error) {
+  //     console.error("Error canceling loan:", error);
+  //   }
+  // };
 
   return (
     <div className="p-6">
@@ -96,9 +118,9 @@ function MyLoanByUser() {
                 <td>
                   <span
                     className={`badge badge-sm ${
-                      loan.status === "approved"
+                      loan.status === "Approved"
                         ? "badge-success"
-                        : loan.status === "pending"
+                        : loan.status === "Pending"
                         ? "badge-warning"
                         : "badge-ghost"
                     }`}
@@ -167,36 +189,37 @@ function MyLoanByUser() {
         </dialog>
       )}
 
-      {/* 2. Cancellation Modal */}
-      {loanToCancel && (
-        <dialog open className="modal">
-          <div className="modal-box border-t-4 border-error">
-            <h3 className="font-bold text-lg text-error">
-              Cancel Application?
-            </h3>
-            <p className="py-4 text-gray-600">
-              Are you sure? This action cannot be undone.
-            </p>
-            <div className="modal-action">
-              <button
-                className="btn btn-ghost"
-                onClick={() => setLoanToCancel(null)}
-              >
-                No, Keep it
-              </button>
-              <button
-                className="btn btn-error text-white"
-                onClick={async () => {
-                  await handleCancel(loanToCancel._id);
-                  setLoanToCancel(null);
-                }}
-              >
-                Yes, Cancel
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
+{/* 2. Cancellation Modal */}
+{loanToCancel && (
+  <dialog open className="modal">
+    <div className="modal-box border-t-4 border-error">
+      <h3 className="font-bold text-lg text-error">
+        Cancel Application?
+      </h3>
+      <p className="py-4 text-gray-600">
+        Are you sure? This action cannot be undone. 
+        <br />
+        <span className="text-xs italic">Loan ID: {loanToCancel._id}</span>
+      </p>
+      <div className="modal-action">
+        <button
+          className="btn btn-ghost"
+          disabled={isCanceling}
+          onClick={() => setLoanToCancel(null)}
+        >
+          No, Keep it
+        </button>
+        <button
+          className={`btn btn-error text-white ${isCanceling ? "loading" : ""}`}
+          disabled={isCanceling}
+          onClick={() => handleCancel(loanToCancel._id)}
+        >
+          {isCanceling ? "Canceling..." : "Yes, Cancel"}
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
 
       {/* 3. Payment Receipt Modal (Triggered by Paid Badge) */}
       {receiptLoan && (

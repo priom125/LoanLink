@@ -4,7 +4,7 @@ import { NavLink, useLoaderData } from 'react-router';
 function ViewDetailsPage() {
 
     const loan = useLoaderData();
-    // console.log(loan.emiPlans);
+    console.log(loan.emiPlans);
     const AvailableEMIPlans = loan.emiPlans || [];
     const EMIPlansArray = Array.isArray(AvailableEMIPlans)
         ? AvailableEMIPlans

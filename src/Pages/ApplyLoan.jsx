@@ -13,7 +13,8 @@ function ApplyLoan() {
   const loanCategories = useLoaderData();
 
   const AUTO_FILL_DATA = {
-    status: 'Pending',  
+    status: 'Pending', 
+    paymentStatus:'Unpaid', 
     userEmail: user?.email || '',
     loanTitle: 'N/A',
     interestRate: 'N/A',

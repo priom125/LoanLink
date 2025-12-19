@@ -60,23 +60,23 @@ function ManageLoans() {
         }
     });
 
-    // 3. Handler to OPEN the modal
+  
     const handleOpenModal = (id) => {
-        setLoanIdToDelete(id); // Store the ID of the loan to be deleted
-        setIsModalOpen(true);  // Open the modal
+        setLoanIdToDelete(id); 
+        setIsModalOpen(true);  
     };
 
-    // 4. Handler for CONFIRMING deletion (called inside the modal)
+   
     const handleConfirmDelete = () => {
         if (loanIdToDelete) {
             deleteMutation.mutate(loanIdToDelete);
         }
     };
     
-    // 5. Handler to CLOSE the modal
+   
     const handleCloseModal = () => {
         setIsModalOpen(false);
-        setLoanIdToDelete(null); // Clear the ID
+        setLoanIdToDelete(null); 
     };
 
     if (isLoading) {
