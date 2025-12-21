@@ -18,7 +18,7 @@ import DashboardLauout from "../Layouts/DashboardLauout";
 import DasbaordSideBar from "../Components/DasbaordSideBar";
 import MyLoanByUser from "../Pages/MyLoanByUser";
 import UserProfile from "../Pages/UserProfile";
-import { hydrate } from "@tanstack/react-query";
+
 import ManagerDashBoard from "../Pages/ManagerDashBoard";
 import AddLoanByManager from "../Pages/AddLoanByManager";
 import PendingLoan from "../Pages/PendingLoan";
@@ -27,7 +27,7 @@ import ManageLoans from "../Pages/ManageLoans";
 import AllLoanApplications from "../Pages/AllLoanApplications";
 import AllLoan from "../Pages/AllLoan";
 import ApplyLoan from "../Pages/ApplyLoan";
-import UpdateUserRole from "../Pages/UpdateUserRole";
+import UpdateUserRole from "../Pages/UserAction";
 import UpdateLoansByAdmin from "../Pages/UpdateLoansByAdmin";
 import UpdateLoanApllicationsStatus from "../Pages/UpdateLoanApllicationsStatus";
 import UpdateLoansByManager from "../Pages/UpdateLoansByManager";
@@ -38,6 +38,7 @@ import Payment from "../Pages/Payment";
 
 import PaymentDone from "../Pages/PaymentDone";
 import PaymentCancel from "../Pages/PaymentCancel";
+import UserAction from "../Pages/UserAction";
 
 const router = createBrowserRouter([
   {
@@ -80,7 +81,11 @@ const router = createBrowserRouter([
       },
       {
         path: "/apply-loan",
-        element: <ApplyLoan />,
+        element: <ProtectedRoute>
+          <BorrowerProtectedRoutes>
+          <ApplyLoan />
+        </BorrowerProtectedRoutes>
+        </ProtectedRoute>,
       },
       {
         path: "/contact",
@@ -91,7 +96,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {" "}
-            <ApplyLoanForm />
+           <BorrowerProtectedRoutes>
+             <ApplyLoanForm />
+           </BorrowerProtectedRoutes>
           </ProtectedRoute>
         ),
         loader: async ({ params }) => {
@@ -104,8 +111,10 @@ const router = createBrowserRouter([
         path: "/apply-loan",
         element: (
           <ProtectedRoute>
-            {" "}
-            <ApplyLoanForm />
+        
+          <BorrowerProtectedRoutes>
+              <ApplyLoanForm />
+          </BorrowerProtectedRoutes>
           </ProtectedRoute>
         ),
       },
@@ -138,62 +147,72 @@ const router = createBrowserRouter([
       // explicit child routes (relative paths)
       {
         path: "my-profile",
-        element: (
-         
-            <UserProfile />
-     
-        ),
+        element: <UserProfile />,
       },
       {
         path: "my-loan",
-        element: <BorrowerProtectedRoutes>
-          <MyLoanByUser />
-        </BorrowerProtectedRoutes>,
+        element: (
+          <BorrowerProtectedRoutes>
+            <MyLoanByUser />
+          </BorrowerProtectedRoutes>
+        ),
       },
       {
         path: "payment/:id",
-        element: <BorrowerProtectedRoutes>
-          <Payment />
-        </BorrowerProtectedRoutes>,
+        element: (
+          <BorrowerProtectedRoutes>
+            <Payment />
+          </BorrowerProtectedRoutes>
+        ),
       },
       {
         path: "payments-success",
-       element: <PaymentDone/>
+        element: <PaymentDone />,
       },
       {
         path: "payments-cancel",
-       element: <PaymentCancel/>
+        element: <PaymentCancel />,
       },
       // keep the old dashboard overview (optional)
       {
         path: "add-loan",
-        element: <ManagerProtectedRoutes>
-          <AddLoanByManager />
-        </ManagerProtectedRoutes>,
+        element: (
+          <ManagerProtectedRoutes>
+            <AddLoanByManager />
+          </ManagerProtectedRoutes>
+        ),
       },
       {
         path: "manage-users",
-        element: <AdminProtectedRoutes>
-          <ManagerDashBoard />
-        </AdminProtectedRoutes>,
+        element: (
+          <AdminProtectedRoutes>
+            <ManagerDashBoard />
+          </AdminProtectedRoutes>
+        ),
       },
       {
         path: "loan-applications",
-        element: <AdminProtectedRoutes>
-          <AllLoanApplications />
-        </AdminProtectedRoutes>,
+        element: (
+          <AdminProtectedRoutes>
+            <AllLoanApplications />
+          </AdminProtectedRoutes>
+        ),
       },
       {
         path: "loan-applications/update-loan-applications/:id",
-        element: <AdminProtectedRoutes>
-          <UpdateLoanApllicationsStatus />
-        </AdminProtectedRoutes>,
+        element: (
+          <AdminProtectedRoutes>
+            <UpdateLoanApllicationsStatus />
+          </AdminProtectedRoutes>
+        ),
       },
       {
         path: "all-loan",
-        element: <AdminProtectedRoutes>
-          <AllLoan />
-        </AdminProtectedRoutes>,
+        element: (
+          <AdminProtectedRoutes>
+            <AllLoan />
+          </AdminProtectedRoutes>
+        ),
       },
       {
         path: "all-loan/update-loan/:id",
@@ -210,13 +229,20 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-loans",
-        element:  <ManagerProtectedRoutes> <ManageLoans /></ManagerProtectedRoutes>,
+        element: (
+          <ManagerProtectedRoutes>
+            {" "}
+            <ManageLoans />
+          </ManagerProtectedRoutes>
+        ),
       },
       {
         path: "manage-loans/update-user-role/:id",
-        element: <ManagerProtectedRoutes>
-          <UpdateLoansByManager />
-        </ManagerProtectedRoutes>,
+        element: (
+          <ManagerProtectedRoutes>
+            <UpdateLoansByManager />
+          </ManagerProtectedRoutes>
+        ),
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/loan/${params.id}`);
           return res.json();
@@ -225,9 +251,11 @@ const router = createBrowserRouter([
       },
       {
         path: "manage-users/update-user-role/:id",
-        element: <AdminProtectedRoutes>
-          <UpdateUserRole />
-        </AdminProtectedRoutes>,
+        element: (
+          <AdminProtectedRoutes>
+            <UserAction />
+          </AdminProtectedRoutes>
+        ),
         loader: async ({ params }) => {
           const res = await fetch(`http://localhost:3000/user/${params.id}`);
           return res.json();
@@ -236,15 +264,19 @@ const router = createBrowserRouter([
       },
       {
         path: "pending-loans",
-        element: <ManagerProtectedRoutes>
-          <PendingLoan />
-        </ManagerProtectedRoutes>,
+        element: (
+          <ManagerProtectedRoutes>
+            <PendingLoan />
+          </ManagerProtectedRoutes>
+        ),
       },
       {
         path: "approved-loans",
-        element: <ManagerProtectedRoutes>
-          <ApprovedLoans />
-        </ManagerProtectedRoutes>,
+        element: (
+          <ManagerProtectedRoutes>
+            <ApprovedLoans />
+          </ManagerProtectedRoutes>
+        ),
       },
     ],
   },

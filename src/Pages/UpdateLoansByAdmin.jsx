@@ -45,7 +45,7 @@ const axiosInstance = useAxios();
       description: formData.description,
       category: formData.category,
       emiPlans: formData.emiPlans,
-
+      showOnHome:formData.showOnHome
    };
 
     // console.log('Updated Loan Data:', updatedLoanData);
@@ -195,7 +195,7 @@ const axiosInstance = useAxios();
             {...register('emiPlans', { 
                 required: 'EMI plans are required (e.g., 12, 24, 36)',
                 pattern: {
-                    // Regex to ensure it's comma-separated integers, optional whitespace
+                  
                     value: /^(\s*\d+\s*)(,\s*\d+\s*)*$/,
                     message: 'Must be comma-separated numbers (e.g., 12, 24, 36)',
                 }

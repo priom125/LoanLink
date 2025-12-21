@@ -9,30 +9,28 @@ const userRoles = [
 
 ];
 
-/**
- * Main AddUserByAdmin lication component containing the Add User Form logic and UI.
- * This component simulates an asynchronous API call (replacing Axios) using setTimeout.
- */
+
 const AddUserByAdmin = () => {
-  // State for displaying success or error messages after form submission
+
   const [message, setMessage] = useState(null);
   const [isError, setIsError] = useState(false);
-  // NEW STATE: State to control the visibility of the form, defaulting to hidden (false)
+
   const [isFormVisible, setIsFormVisible] = useState(false); 
 
-  // Initialize useForm hook for form management and validation
+
   const {
-    register, // Function to register inputs
-    handleSubmit, // Wrapper function to handle form submission and validation
-    reset, // Function to clear the form
-    formState: { errors, isSubmitting }, // Destructure validation errors and submission status
+    register, 
+    handleSubmit, 
+    reset, 
+    formState: { errors, isSubmitting }, 
   } = useForm({
-    // Set default values for controlled inputs
+   
     defaultValues: {
       firstName: '',
       lastName: '',
       email: '',
       role: userRoles[0].value,
+      roleStatus: 'Pending'
     },
   });
 
@@ -51,6 +49,7 @@ firstName: data.firstName,
 lastName: data.lastName,
 email: data.email,
 role: data.role,
+roleStatus: 'Pending',
 
 };
 
@@ -97,7 +96,7 @@ setIsError(true);
               Add new users and assign their roles securely.
             </p>
 
-            {/* Status Message Display */}
+          
             {message && (
               <div 
                 className={`p-4 mb-6 rounded-lg font-medium transition-opacity duration-300 ${

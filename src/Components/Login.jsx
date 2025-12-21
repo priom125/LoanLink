@@ -41,17 +41,19 @@ function Login() {
         name: user.displayName,
         email: user.email,
         photoURL: user.photoURL,
-        role: "borrower"
+        role: "borrower",
+        roleStatus: 'Pending',
       };
 
       const url = "http://localhost:3000/users";
       const response = await axios.post(url, fullSubmission);
 
       console.log("Registration successful! User Data:", response.data);
-      toast.success("Login successful!");
+     
 
       const from = location.state?.from || "/";
       navigate(from);
+       toast.success("Login successful!");
     } catch (error) {
       console.error("Google login error:", error);
       toast.error("Login Failed. Please try again.");

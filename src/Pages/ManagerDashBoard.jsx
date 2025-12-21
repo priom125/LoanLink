@@ -14,6 +14,11 @@ function ManagerDashBoard() {
     },
   });
 
+const pendingUsers = allUser.filter(
+  (user) => user.roleStatus === "Pending"
+);
+
+console.log(pendingUsers)
   return (
     <div className="overflow-x-auto">
       <AddUserByAdmin />
@@ -28,20 +33,28 @@ function ManagerDashBoard() {
           </tr>
         </thead>
         <tbody>
-          {allUser.map((user) => (
-            <tr key={user._id}>
-              <td>{user.name}</td>
-              <td>
-                <div className="font-bold">{user.email}</div>
-              </td>
-              <td>{user.role}</td>
-              <td className="space-x-2">
-                <NavLink to={`/dashboard/manage-users/update-user-role/${user._id}`}>
-                  <button className="btn btn-info btn-sm">Update</button>
-                </NavLink>
-              </td>
-            </tr>
-          ))}
+          {pendingUsers.length > 0 ? (
+  pendingUsers.map((user) => (
+    <tr key={user._id}>
+      <td>{user.name}</td>
+      <td>
+        <div className="font-bold">{user.email}</div>
+      </td>
+      <td>{user.role}</td>
+      <td className="space-x-2">
+        <NavLink to={`/dashboard/manage-users/update-user-role/${user._id}`}>
+          <button className="btn btn-info btn-sm">Update</button>
+        </NavLink>
+      </td>
+    </tr>
+  ))
+) : (
+  <tr>
+    <td colSpan="4" className="text-center font-semibold">
+      No user to show
+    </td>
+  </tr>
+)}
         </tbody>
       </table>
     </div>

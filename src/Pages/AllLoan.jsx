@@ -2,21 +2,17 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import React, { useState } from "react"; // 1. Import useState
 import useAxios from "../hooks/useAxios";
 import { NavLink } from "react-router"; 
-// Assuming you have a Modal component or structure available
+
 
 function AllLoan() {
   const axiosInstance = useAxios();
   const queryClient = useQueryClient();
 
-  // --- STATE FOR MODAL MANAGEMENT ---
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [loanIdToDelete, setLoanIdToDelete] = useState(null);
-  
-  // 1. Data Fetching
-  const { 
-    data: AllLoanCategory = [], 
-    isLoading, 
-  } = useQuery({
+
+
+  const { data: AllLoanCategory = [], isLoading } = useQuery({
     queryKey: ["AllLoanCategory"],
     queryFn: async () => {
       const res = await axiosInstance.get("all-loan-category");
@@ -24,7 +20,21 @@ function AllLoan() {
     },
   });
 
-  // 2. Deletion Logic (useMutation)
+
+  const toggleHomeMutation = useMutation({
+  mutationFn: async ({ id, showOnHome }) => {
+
+    return await axiosInstance.patch(`/update-loan-category/${id}`, {
+      showOnHome: !showOnHome 
+    });
+  },
+  onSuccess: () => {
+
+    queryClient.invalidateQueries(["AllLoanCategory"]);
+  }
+});
+
+
   const deleteMutation = useMutation({
     mutationFn: async (idToDelete) => {
       const res = await axiosInstance.delete(`delete-loan-category/${idToDelete}`);
@@ -32,44 +42,35 @@ function AllLoan() {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["AllLoanCategory"] });
-      // Close modal on success
-      setIsModalOpen(false); 
+      setIsModalOpen(false);
       setLoanIdToDelete(null);
-      // You can add a success toast here
     },
-    onError: (error) => {
-        console.error("Deletion failed:", error);
-        // You can add an error toast here
-    }
   });
 
-  // 3. Handler to OPEN the modal
   const handleOpenModal = (id) => {
-    setLoanIdToDelete(id); // Store the ID of the loan to be deleted
-    setIsModalOpen(true);  // Open the modal
+    setLoanIdToDelete(id);
+    setIsModalOpen(true);
   };
 
-  // 4. Handler for CONFIRMING deletion (called inside the modal)
   const handleConfirmDelete = () => {
-    if (loanIdToDelete) {
-        deleteMutation.mutate(loanIdToDelete);
-    }
+    if (loanIdToDelete) deleteMutation.mutate(loanIdToDelete);
   };
-  
-  // 5. Handler to CLOSE the modal
+
   const handleCloseModal = () => {
     setIsModalOpen(false);
-    setLoanIdToDelete(null); // Clear the ID
+    setLoanIdToDelete(null);
   };
 
-  if (isLoading) {
-    return <p>Loading loan categories...</p>;
-  }
+const handleToggleHome = (id, currentStatus) => {
+  console.log("Toggle clicked for ID:", id, "Current Status:", currentStatus);
+  toggleHomeMutation.mutate({ id, showOnHome: currentStatus });
+};
+
+  if (isLoading) return <p>Loading loan categories...</p>;
 
   return (
     <div className="overflow-x-auto">
       <table className="table">
-        {/* Table Head */}
         <thead>
           <tr>
             <th>Image</th>
@@ -84,26 +85,35 @@ function AllLoan() {
         <tbody>
           {AllLoanCategory.map((loan) => (
             <tr key={loan._id}>
-              {/* ... (Your existing table columns) ... */}
+             
               <td>
-                <div className="flex items-center gap-3">
-                  <div className="avatar">
-                    <div className="mask mask-squircle h-12 w-12">
-                      <img
-                        src={loan.display_url}
-                        alt="Loan category image"
-                      />
-                    </div>
+                <div className="avatar">
+                  <div className="mask mask-squircle h-12 w-12">
+                    <img src={loan.display_url} alt="Loan" />
                   </div>
                 </div>
               </td>
               <td>{loan.loanTitle}</td>
-              <td>
-                <div className="font-bold">{loan.interestRate}%</div>
-              </td>
+              <td>{loan.interestRate}%</td>
               <td>{loan.category}</td>
               <td>{loan.createdByRole}</td>
-              <td>{loan.showOnHome ? "Yes" : "No"}</td>
+              
+           
+             <td>
+  <div className="form-control"> 
+    <label className="label cursor-pointer">
+      <input
+        type="checkbox"
+        className="toggle toggle-primary"
+      
+        checked={!!loan.showOnHome} 
+        onChange={() => handleToggleHome(loan._id, loan.showOnHome)}
+      
+        disabled={toggleHomeMutation.isPending}
+      />
+    </label>
+  </div>
+</td>
 
               <td className="space-x-2">
                 <NavLink
@@ -114,7 +124,7 @@ function AllLoan() {
                 </NavLink>
                 <button
                   className="btn btn-error btn-sm"
-                  onClick={() => handleOpenModal(loan._id)} // Open modal instead of deleting immediately
+                  onClick={() => handleOpenModal(loan._id)}
                   disabled={deleteMutation.isPending}
                 >
                   Delete
@@ -125,35 +135,21 @@ function AllLoan() {
         </tbody>
       </table>
 
-      {/* --- CONFIRMATION MODAL (Using DaisyUI/Tailwind structure) --- */}
+    
       {isModalOpen && (
         <div className="modal modal-open">
           <div className="modal-box">
             <h3 className="font-bold text-lg text-red-600">Confirm Deletion</h3>
-            <p className="py-4">
-              Are you sure you want to delete this loan category? This action cannot be undone.
-            </p>
+            <p className="py-4">Are you sure? This action cannot be undone.</p>
             <div className="modal-action">
-              <button 
-                className="btn" 
-                onClick={handleCloseModal}
-                disabled={deleteMutation.isPending}
-              >
-                Cancel
-              </button>
-              <button 
-                className="btn btn-error" 
-                onClick={handleConfirmDelete}
-                disabled={deleteMutation.isPending}
-              >
+              <button className="btn" onClick={handleCloseModal}>Cancel</button>
+              <button className="btn btn-error" onClick={handleConfirmDelete}>
                 {deleteMutation.isPending ? 'Deleting...' : 'Confirm Delete'}
               </button>
             </div>
           </div>
         </div>
       )}
-      {/* --- END MODAL --- */}
-
     </div>
   );
 }

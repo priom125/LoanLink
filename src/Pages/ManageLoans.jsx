@@ -5,18 +5,18 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 function ManageLoans() {
     const axiosInstance = useAxios();
-    // 1. Missing Hooks/State Variables added here
-    const queryClient = useQueryClient(); // <-- ADDED: For invalidating queries
-    const [isModalOpen, setIsModalOpen] = useState(false); // <-- ADDED: For modal control
-    const [loanIdToDelete, setLoanIdToDelete] = useState(null); // <-- ADDED: For storing ID to delete
+ 
+    const queryClient = useQueryClient();
+    const [isModalOpen, setIsModalOpen] = useState(false); 
+    const [loanIdToDelete, setLoanIdToDelete] = useState(null); 
 
     const [searchTerm, setSearchTerm] = useState("");
     const [selectedCategory, setSelectedCategory] = useState("");
 
-    // 1. Fetching Logic (useQuery)
+   
     const { data: allLoan = [], isLoading, isError } = useQuery({
-        // IMPORTANT: The queryKey used for fetching should match the one used for invalidation
-        queryKey: ["AllLoanCategory"], // Changed key to match invalidation key in mutation
+       
+        queryKey: ["AllLoanCategory"], 
         queryFn: async () => {
             const res = await axiosInstance.get("all-loan-category");
             return res.data;
@@ -40,23 +40,23 @@ function ManageLoans() {
         return titleMatch && categoryMatch;
     });
 
-    // 2. Deletion Logic (useMutation)
+
     const deleteMutation = useMutation({
         mutationFn: async (idToDelete) => {
             const res = await axiosInstance.delete(`delete-loan-category/${idToDelete}`);
             return res.data;
         },
         onSuccess: () => {
-            // Invalidate the list to re-fetch and update the UI
+    
             queryClient.invalidateQueries({ queryKey: ["AllLoanCategory"] }); 
-            // Close modal on success
+         
             setIsModalOpen(false); 
             setLoanIdToDelete(null);
-            console.log("Loan category deleted successfully!"); // Placeholder for a toast notification
+            console.log("Loan category deleted successfully!"); 
         },
         onError: (error) => {
-            console.error("Deletion failed:", error); // Placeholder for an error toast
-            // The modal will remain open so the user can see the error or try again
+            console.error("Deletion failed:", error); 
+           
         }
     });
 
@@ -150,7 +150,7 @@ function ManageLoans() {
                                 <td>{loan.category}</td>
                                 <td className="space-x-2">
                                     <NavLink
-                                        // Changed the route for updating a loan category
+                                        
                                         to={`update-user-role/${loan._id}`} 
                                         className="btn btn-success btn-sm"
                                     >

@@ -9,14 +9,15 @@ import {
   BookOpenCheck,
   MapPin,
 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+
 
 import useAxios from "../hooks/useAxios";
 import { useQuery } from "@tanstack/react-query";
+import { useNavigate } from "react-router";
 
 function UserProfile() {
   const { user, logOut } = useContext(AuthContext);
-
+  const navigate = useNavigate();
   const axiosInstance = useAxios();
 
   const { data: myLoan = [] } = useQuery({
@@ -41,11 +42,13 @@ function UserProfile() {
   const Role = userData[0]?.role;
   const Name = userData[0]?.name;
   const PhotoUrl = userData[0]?.photoURL;
+  const RoleStatus = userData[0]?.roleStatus;
  
   const handleLogout = () => {
     logOut()
       .then(() => {
         console.log("Logged out successfully");
+        navigate('/')
       })
       .catch((error) => {
         console.log(error);
@@ -71,6 +74,9 @@ function UserProfile() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
           <p className="flex space-x-2">
             <User className="text-green-500" /> {Role}
+          </p>
+          <p className="flex space-x-2">
+            <User className="text-green-500" /> {RoleStatus}
           </p>
           <p className="flex space-x-2">
             <Mail className="text-green-500" /> {user?.email}
