@@ -38,7 +38,7 @@ function Payment() {
   if (isLoading) return <div className="text-center mt-10">Loading...</div>;
 
   return (
-    <div className="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-xl overflow-hidden border border-gray-200">
+    <div className="max-w-md mx-auto mt-10  shadow-lg rounded-xl overflow-hidden border border-gray-200">
       {/* Header */}
       <div className="bg-gray-50 px-6 py-4 border-b border-gray-200">
         <h2 className="text-xl font-bold text-gray-800">Application Fee</h2>

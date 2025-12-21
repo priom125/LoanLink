@@ -153,7 +153,7 @@ const AddLoanByManager = () => {
 
   return (
     // Dark theme background
-    <div className="min-h-screen bg-gray-900 flex items-start justify-center p-4 py-8">
+    <div className="min-h-screen flex items-start justify-center p-4 py-8">
       {/* Dark theme card container, wide layout */}
       <div className="w-full max-w-4xl bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl border border-gray-700">
         {/* Header */}

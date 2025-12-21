@@ -1,0 +1,3 @@
+daisyui: {
+  themes: ["light", "dark"], 
+}

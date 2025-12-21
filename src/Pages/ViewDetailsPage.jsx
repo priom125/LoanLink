@@ -10,7 +10,7 @@ function ViewDetailsPage() {
         ? AvailableEMIPlans
         : (typeof AvailableEMIPlans === 'string' ? AvailableEMIPlans.split(',').map(s => s.trim()) : []);
   return (
-        <div className="w-full max-w-full bg-gray-950 py-12 my-10 px-4 sm:px-6 lg:px-8">
+        <div className="w-full max-w-full  py-12 my-10 px-4 sm:px-6 lg:px-8">
             
             <div className="bg-gray-900 border border-gray-800 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden">
                 

@@ -73,10 +73,10 @@ const handleCancel = async (id) => {
     <div className="p-6">
       <h2 className="text-2xl font-bold mb-6">My Loan Applications</h2>
 
-      <div className="overflow-x-auto bg-white rounded-lg shadow">
+      <div className="overflow-x-auto  rounded-lg shadow">
         <table className="table w-full">
           <thead>
-            <tr className="bg-gray-100">
+            <tr className="">
               <th>Loan ID</th>
               <th>Loan Info</th>
 

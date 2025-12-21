@@ -17,7 +17,7 @@ const LoanDetailsModal = ({ loan, onClose }) => {
       
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950 bg-opacity-50" onClick={onClose}>
         
-            <div className="bg-white rounded-xl shadow-2xl p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className=" rounded-xl shadow-2xl p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                 
                 <div className="flex justify-between items-start mb-4">
                     <h2 className="text-2xl font-bold text-gray-800">Loan Application Details</h2>

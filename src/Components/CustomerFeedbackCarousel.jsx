@@ -39,7 +39,7 @@ function CustomerFeedbackCarousel() {
 
   return (
     <section className="w-full max-w-4xl py-16 mx-auto px-4 sm:px-6 lg:px-8 ">
-            <h2 className="text-4xl font-extrabold text-white text-center mb-12">
+            <h2 className="text-4xl font-extrabold text-base-content text-center mb-12">
                 What Our Customers Say
             </h2>
 

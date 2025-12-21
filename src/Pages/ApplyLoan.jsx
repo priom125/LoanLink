@@ -65,7 +65,7 @@ function ApplyLoan() {
     }
   };
   return (
-               <div className="min-h-screen bg-gray-900 flex items-center justify-center p-4 my-10">
+               <div className="min-h-screen flex items-center justify-center p-4 my-10">
    
             <div className="w-full max-w-3xl bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl border border-gray-700 transform transition-all duration-300 hover:shadow-3xl">
                 
