@@ -68,7 +68,7 @@ function UpdateLoansByManager() {
       
       // Navigate back after short delay
       setTimeout(() => {
-        navigate('/dashboard/all-loan');
+        navigate('/dashboard/manage-loans');
       }, 1500);
     } catch (error) {
       console.error('Error updating loan:', error);

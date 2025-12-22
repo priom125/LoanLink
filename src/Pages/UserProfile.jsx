@@ -31,7 +31,7 @@ function UserProfile() {
   const { data: userData = [] } = useQuery({
     queryKey: ["user-data", user?.email],
     queryFn: async () => {
-      const res = await axiosInstance.get(`/user-data?email=${user?.email}`);
+      const res = await axiosInstance.get(`user-data?email=${user?.email}`);
       return res.data;
     },
     enabled: !!user?.email,
