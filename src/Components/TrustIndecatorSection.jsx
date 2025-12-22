@@ -15,7 +15,7 @@ function TrustIndecatorSection() {
         </h2>
     <div className="w-full max-w-7xl mx-auto py-12 bg-gray-900 rounded-xl shadow-inner shadow-black/20 mb-16">
           
-        <p className=''>Explore our range of microloan products tailored for your organizational needs.</p>
+        <p className='text-center'>Explore our range of microloan products tailored for your organizational needs.</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 text-center px-4">
             {stats.map((stat, index) => (
                 <div key={index} className="flex flex-col items-center">
