@@ -39,12 +39,13 @@ import Payment from "../Pages/Payment";
 import PaymentDone from "../Pages/PaymentDone";
 import PaymentCancel from "../Pages/PaymentCancel";
 import UserAction from "../Pages/UserAction";
+import Error from "../Pages/Error";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <HomeLayouts />,
-
+    errorElement: <Error />,
     children: [
       {
         index: true,
@@ -81,11 +82,13 @@ const router = createBrowserRouter([
       },
       {
         path: "/apply-loan",
-        element: <ProtectedRoute>
-          <BorrowerProtectedRoutes>
-          <ApplyLoan />
-        </BorrowerProtectedRoutes>
-        </ProtectedRoute>,
+        element: (
+          <ProtectedRoute>
+            <BorrowerProtectedRoutes>
+              <ApplyLoan />
+            </BorrowerProtectedRoutes>
+          </ProtectedRoute>
+        ),
       },
       {
         path: "/contact",
@@ -96,9 +99,9 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             {" "}
-           <BorrowerProtectedRoutes>
-             <ApplyLoanForm />
-           </BorrowerProtectedRoutes>
+            <BorrowerProtectedRoutes>
+              <ApplyLoanForm />
+            </BorrowerProtectedRoutes>
           </ProtectedRoute>
         ),
         loader: async ({ params }) => {
@@ -111,19 +114,22 @@ const router = createBrowserRouter([
         path: "/apply-loan",
         element: (
           <ProtectedRoute>
-        
-          <BorrowerProtectedRoutes>
+            <BorrowerProtectedRoutes>
               <ApplyLoanForm />
-          </BorrowerProtectedRoutes>
+            </BorrowerProtectedRoutes>
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "*",
+        element: <Error />,
       },
     ],
   },
   {
     path: "/",
     element: <AuthLayout />,
-
+    errorElement: <Error />,
     children: [
       {
         path: "/login",
@@ -277,6 +283,10 @@ const router = createBrowserRouter([
             <ApprovedLoans />
           </ManagerProtectedRoutes>
         ),
+      },
+      {
+        path: "*",
+        element: <Error />,
       },
     ],
   },

@@ -46,7 +46,6 @@ function AllLoan() {
       setLoanIdToDelete(null);
     },
   });
-
   const handleOpenModal = (id) => {
     setLoanIdToDelete(id);
     setIsModalOpen(true);

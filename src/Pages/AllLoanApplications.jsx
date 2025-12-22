@@ -1,83 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import useAxios from '../hooks/useAxios';
-
-const LoanDetailsModal = ({ loan, onClose }) => {
-
-    if (!loan) return null;
+import LoanDetailsModal from '../Components/LoanDetailsModal';
 
 
-    const getStatusClass = (status) => {
-        if (status === 'Approved') return 'bg-green-500';
-        if (status === 'Rejected') return 'bg-red-500';
-        return 'bg-yellow-500'; 
-    };
-
-    return (
-      
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-gray-950 bg-opacity-50" onClick={onClose}>
-        
-            <div className=" rounded-xl shadow-2xl p-6 w-11/12 md:w-3/4 lg:w-1/2 max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                
-                <div className="flex justify-between items-start mb-4">
-                    <h2 className="text-2xl font-bold text-gray-800">Loan Application Details</h2>
-                    <button 
-                        onClick={onClose} 
-                        className="text-gray-400 hover:text-gray-600 transition-colors duration-150"
-                        aria-label="Close"
-                    >
-                        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                    </button>
-                </div>
-
-                <div className="space-y-4">
-                    <p className="text-sm text-gray-500">
-                        <span className="font-semibold text-gray-700">Loan ID:</span> {loan._id}
-                    </p>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
-                        <div>
-                            <p className="font-semibold text-lg text-blue-600 mb-1">Applicant Information</p>
-                            <p><strong>Name:</strong> {loan.firstName} {loan.lastName}</p>
-                            <p><strong>Email:</strong> {loan.userEmail}</p>
-                    
-                            <p><strong>Phone:</strong> {loan.phone || 'N/A'}</p> 
-                            <p><strong>Address:</strong> {loan.address || 'N/A'}</p> 
-                        </div>
-
-                        <div>
-                            <p className="font-semibold text-lg text-blue-600 mb-1">Loan Details</p>
-                            <p><strong>Category:</strong> {loan.category}</p>
-                            <p><strong>Amount:</strong> ${loan.loanAmount}</p>
-                            <p><strong>Interest Rate:</strong> {loan.interestRate}</p>
-                          
-                        </div>
-                    </div>
-                    
-                    <div className="border-t pt-4">
-                         <p className="font-semibold text-lg text-blue-600 mb-1">Current Status</p>
-                         <span className={`px-3 py-1 text-sm font-bold text-white rounded-full ${getStatusClass(loan.status)} shadow-md`}>
-                            {loan.status}
-                         </span>
-            
-                         {loan.notes && <p className="mt-2 text-gray-600"><strong>Notes:</strong> {loan.notes}</p>}
-                    </div>
-
-                </div>
-
-                <div className="mt-6 text-right">
-                    <button 
-                        onClick={onClose} 
-                        className="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition-colors"
-                    >
-                        Close
-                    </button>
-                </div>
-            </div>
-        </div>
-    );
-};
-
+<LoanDetailsModal/>
 
 function AllLoanApplications() {
     const axiosInstance = useAxios();

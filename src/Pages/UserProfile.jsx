@@ -85,9 +85,7 @@ function UserProfile() {
             <Shield className="text-green-500" />{" "}
             {user?.emailVerified ? "Verified" : "Not Verified"}
           </p>
-          <p className="flex space-x-2">
-            <MapPin className="text-green-500" /> {myLoan[0]?.address}
-          </p>
+   
         </div>
 
         <div className="flex justify-center pt-4">

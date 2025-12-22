@@ -47,8 +47,8 @@ console.log(approvedLoan);
 
               <td>Date : {loan.submissionDate}</td>
               <td className="space-x-2">
-                <button className="btn btn-success btn-sm">Update</button>
-                <button className="btn btn-error btn-sm">Delete</button>
+                <button className="btn btn-success btn-sm">View</button>
+             
               </td>
             </tr>
           ))}

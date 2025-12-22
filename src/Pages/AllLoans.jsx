@@ -1,6 +1,7 @@
 import React from 'react'
 import { useLoaderData } from 'react-router';
 import LoanCard from '../Components/LoanCard';
+import AllLoanPageCard from '../Components/AllLoanPageCard';
 
 function AllLoans() {
   const loanCategories = useLoaderData();
@@ -15,7 +16,7 @@ function AllLoans() {
       </h2>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-full px-10 mx-auto mb-20">
         {loanCategories.map((item, index) => (
-          <LoanCard key={item.id ?? index} loanCategories={item} />
+          <AllLoanPageCard key={item.id ?? index} loanCategories={item} />
         ))}
       </div>
       </div>

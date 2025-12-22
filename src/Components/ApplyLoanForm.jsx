@@ -7,10 +7,12 @@ import {
 import { NavLink, useLoaderData } from 'react-router';
 import { AuthContext } from '../Auth/AuthProvider';
 import axios from 'axios';
+import useAxios from '../hooks/useAxios';
 
 function ApplyLoanForm() {
   const { user, loading } = useContext(AuthContext);
   const loanCategories = useLoaderData();
+  const axiosInstance = useAxios();
 
   const AUTO_FILL_DATA = {
     loanTitle: loanCategories?.loanTitle || 'N/A',
@@ -45,7 +47,7 @@ function ApplyLoanForm() {
       };
 
       const url = 'http://localhost:3000/add-loan';
-      const response = await axios.post(url, fullSubmission);
+      const response = await axiosInstance.post(url, fullSubmission);
 
       // adjust success condition depending on your API response shape
       if (response.status >= 200 && response.status < 300) {

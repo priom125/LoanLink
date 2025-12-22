@@ -15,12 +15,13 @@ import {
   Send,
   Edit3,
 } from "lucide-react";
-// Imported ToastContainer and toast
+
 import { ToastContainer, toast } from "react-toastify";
 import useAxios from "../hooks/useAxios";
 import { NavLink } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import { AuthContext } from "../Auth/AuthProvider";
+import axios from "axios";
 
 
 const SYSTEM_DATE = new Date().toLocaleDateString("en-US", {
@@ -31,7 +32,7 @@ const SYSTEM_DATE = new Date().toLocaleDateString("en-US", {
 
 
 
-// Helper component for displaying form errors
+
 const ErrorMessage = ({ message }) => (
   <p className="flex items-center mt-1 text-sm text-red-400 font-medium">
     <AlertTriangle className="w-4 h-4 mr-1 flex-shrink-0" />
@@ -39,7 +40,7 @@ const ErrorMessage = ({ message }) => (
   </p>
 );
 
-// Toggle Switch Component (for Show on Home)
+
 const ToggleSwitch = ({ label, register, name, loading }) => (
   <div className="flex items-center justify-between p-3 bg-gray-700 rounded-lg border border-gray-600">
     <label
@@ -62,7 +63,7 @@ const ToggleSwitch = ({ label, register, name, loading }) => (
   </div>
 );
 
-// Main Application Component
+
 const AddLoanByManager = () => {
   const {
     register,
@@ -70,7 +71,7 @@ const AddLoanByManager = () => {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      showOnHome: true, // Defaulting toggle to ON
+      showOnHome: true, 
       category: "Personal",
     },
   });
@@ -95,12 +96,12 @@ const AddLoanByManager = () => {
   const role = Array.isArray(userData) ? userData[0]?.role : userData?.role;
   console.log('user role:', role);
 
-  // POST form data using axios instance
+
   const handleAddLoan = async (data) => {
     setLoading(true);
 
     try {
-      // Build base payload first
+    
       const newLoanProduct = {
         ...data,
         dateCreated: SYSTEM_DATE,
@@ -109,27 +110,25 @@ const AddLoanByManager = () => {
         createdByRole: role ?? 'manager',
       };
 
-      // If an image file was provided, upload it first to imgbb
-      const file = data.imagesUpload?.[0];
-      if (file) {
-        const imageUploadUrl = `https://api.imgbb.com/1/upload?expiration=600&key=${import.meta.env.VITE_IMAGE_HOST}`;
-        const formData = new FormData();
-        formData.append("image", file);
+    
+const file = data.imagesUpload?.[0];
 
-        // Use axios instance to upload image
-        const imageResponse = await axiosInstance.post(imageUploadUrl, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+if (file) {
+  const imageUploadUrl = `https://api.imgbb.com/1/upload?key=${import.meta.env.VITE_IMAGE_HOST}`;
 
-        const imageUrl = imageResponse?.data?.data?.display_url;
-        if (imageUrl) {
-          // attach the uploaded image URL to payload
-          newLoanProduct.display_url = imageUrl;
-        }
-        console.log("Image uploaded, url:", imageUrl);
-      }
+  const formData = new FormData();
+  formData.append("image", file);
 
-      // Now send the full payload to backend
+  const imageResponse = await axios.post(imageUploadUrl, formData);
+
+  const imageUrl = imageResponse?.data?.data?.display_url;
+  if (imageUrl) {
+    newLoanProduct.display_url = imageUrl;
+  }
+}
+
+
+
       const url = "/dashboard/add-loan-category";
       const response = await axiosInstance.post(url, newLoanProduct);
 
@@ -152,9 +151,9 @@ const AddLoanByManager = () => {
 
 
   return (
-    // Dark theme background
+
     <div className="min-h-screen flex items-start justify-center p-4 py-8">
-      {/* Dark theme card container, wide layout */}
+
       <div className="w-full max-w-4xl bg-gray-800 p-6 md:p-10 rounded-xl shadow-2xl border border-gray-700">
         {/* Header */}
         <div className="text-center mb-8">
@@ -168,9 +167,9 @@ const AddLoanByManager = () => {
         </div>
 
         <form onSubmit={handleSubmit(handleAddLoan)} className="space-y-6">
-          {/* --- Top Row: System Date & Show on Home --- */}
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
-            {/* System Date (Read-Only) */}
+    
             <div className="md:col-span-1">
               <p className="text-sm font-medium text-gray-300 mb-1">
                 Date Created (System)
@@ -181,9 +180,9 @@ const AddLoanByManager = () => {
               </div>
             </div>
 
-            {/* Show on Home Toggle - Alignment Fix */}
+       
             <div className="md:col-span-2">
-              {/* Dummy label to reserve space and align toggle with date input box */}
+   
               <p className="text-sm font-medium text-gray-300 mb-1 opacity-0 pointer-events-none select-none">
                 Placeholder
               </p>
@@ -196,7 +195,6 @@ const AddLoanByManager = () => {
             </div>
           </div>
 
-          {/* --- Loan Title & Category Row --- */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Loan Title */}
             <div className="md:col-span-2">
@@ -443,7 +441,7 @@ const AddLoanByManager = () => {
                 accept="image/*"
                 multiple
                 disabled={loading}
-                // Note: File handling for real uploads is complex, this registers the input value.
+           
                 {...register("imagesUpload")}
                 className="text-sm text-gray-400 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 cursor-pointer"
               />
@@ -499,7 +497,7 @@ const AddLoanByManager = () => {
           <p className="text-gray-400">
             Go back to{" "}
             <NavLink
-              to="/dashboard/manage-users" // Placeholder for navigation to Loan Dashboard
+              to="/dashboard/manage-users" 
               className="font-medium text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out"
             >
               Loan Management
@@ -507,7 +505,7 @@ const AddLoanByManager = () => {
           </p>
         </div>
       </div>
-      {/* Toast Container for notifications */}
+
       <ToastContainer
         position="bottom-right"
         autoClose={5000}

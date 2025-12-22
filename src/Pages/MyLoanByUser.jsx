@@ -79,7 +79,7 @@ const handleCancel = async (id) => {
             <tr className="">
               <th>Loan ID</th>
               <th>Loan Info</th>
-
+              <th>Amount</th>
               <th>Fee Status</th>
               <th>Application Status</th>
               <th className="text-center">Actions</th>
@@ -90,6 +90,7 @@ const handleCancel = async (id) => {
               <tr key={loan._id} className="hover">
                 <td className="font-bold">{loan._id}</td>
                 <td className="font-bold">{loan.loanTitle}</td>
+                <td className="font-bold">{loan.loanAmount}</td>
 
                 {/* Payment Status Column */}
                 <td>
@@ -159,48 +160,57 @@ const handleCancel = async (id) => {
       {/* --- MODALS --- */}
 
       {/* 1. General Details Modal */}
-      {selectedLoan && (
-        <dialog open className="modal modal-bottom sm:modal-middle">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg border-b pb-2 mb-4">
-              Application Details
-            </h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <p>
-                <strong>Name:</strong> {selectedLoan.firstName}{" "}
-                {selectedLoan.lastName}
-              </p>
-              <p>
-                <strong>Email:</strong> {selectedLoan.userEmail}
-              </p>
-              <p>
-                <strong>Contact:</strong> {selectedLoan.contactNumber}
-              </p>
-              <p>
-                <strong>Category:</strong> {selectedLoan.category}
-              </p>
-            </div>
-            <div className="modal-action">
-              <button className="btn" onClick={() => setSelectedLoan(null)}>
-                Close
-              </button>
-            </div>
-          </div>
-        </dialog>
-      )}
+{selectedLoan && (
+  <dialog open className="modal modal-bottom sm:modal-middle">
+    <div className="modal-box bg-base-100 text-base-content">
+      <h3 className="font-bold text-lg border-b border-base-300 pb-2 mb-4">
+        Application Details
+      </h3>
+
+      <div className="grid grid-cols-2 gap-4 text-sm">
+        <p>
+          <strong>Name:</strong> {selectedLoan.firstName} {selectedLoan.lastName}
+        </p>
+        <p>
+          <strong>Email:</strong> {selectedLoan.userEmail}
+        </p>
+        <p>
+          <strong>Contact:</strong> {selectedLoan.contactNumber}
+        </p>
+        <p>
+          <strong>Category:</strong> {selectedLoan.category}
+        </p>
+      </div>
+
+      <div className="modal-action">
+        <button
+          className="btn btn-outline"
+          onClick={() => setSelectedLoan(null)}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  </dialog>
+)}
+
 
 {/* 2. Cancellation Modal */}
 {loanToCancel && (
   <dialog open className="modal">
-    <div className="modal-box border-t-4 border-error">
+    <div className="modal-box bg-base-100 text-base-content border-t-4 border-error">
       <h3 className="font-bold text-lg text-error">
         Cancel Application?
       </h3>
-      <p className="py-4 text-gray-600">
-        Are you sure? This action cannot be undone. 
+
+      <p className="py-4 text-base-content/70">
+        Are you sure? This action cannot be undone.
         <br />
-        <span className="text-xs italic">Loan ID: {loanToCancel._id}</span>
+        <span className="text-xs italic opacity-70">
+          Loan ID: {loanToCancel._id}
+        </span>
       </p>
+
       <div className="modal-action">
         <button
           className="btn btn-ghost"
@@ -209,8 +219,11 @@ const handleCancel = async (id) => {
         >
           No, Keep it
         </button>
+
         <button
-          className={`btn btn-error text-white ${isCanceling ? "loading" : ""}`}
+          className={`btn btn-error text-white ${
+            isCanceling ? "loading" : ""
+          }`}
           disabled={isCanceling}
           onClick={() => handleCancel(loanToCancel._id)}
         >
@@ -221,43 +234,48 @@ const handleCancel = async (id) => {
   </dialog>
 )}
 
+
       {/* 3. Payment Receipt Modal (Triggered by Paid Badge) */}
-      {receiptLoan && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl">
-            <h3 className="text-xl font-bold text-center mb-4">
-              Payment Receipts
-            </h3>
+{receiptLoan && (
+  <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+    <div className="bg-base-100 text-base-content rounded-2xl max-w-md w-full p-6 shadow-2xl">
+      <h3 className="text-xl font-bold text-center mb-4">
+        Payment Receipt
+      </h3>
 
-            <div className="space-y-4 max-h-80 overflow-y-auto">
-              <div className="border rounded-lg p-4 text-sm space-y-1">
-                <p>
-                  <strong>Transaction ID:</strong> {receiptLoan.transactionID}
-                </p>
-                <p>
-                  <strong>Email:</strong> {receiptLoan.customerEmail}
-                </p>
-                <p>
-                  <strong>Amount:</strong> $10.00
-                </p>
-                <p>
-                  <strong>Payment Status:</strong> {receiptLoan.paymentStatus}
-                </p>
-                <p>
-                  <strong>Date:</strong> {receiptLoan.paidAt}
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => setReceiptLoan(null)}
-              className="mt-6 w-full btn btn-neutral"
-            >
-              Close
-            </button>
-          </div>
+      <div className="space-y-4 max-h-80 overflow-y-auto">
+        <div className="border border-base-300 rounded-lg p-4 text-sm space-y-1">
+          <p>
+            <strong>Transaction ID:</strong> {receiptLoan.transactionID}
+          </p>
+          <p>
+            <strong>Email:</strong> {receiptLoan.customerEmail}
+          </p>
+          <p>
+            <strong>Amount:</strong> $10.00
+          </p>
+          <p>
+            <strong>Status:</strong>{" "}
+            <span className="badge badge-success">
+              {receiptLoan.paymentStatus}
+            </span>
+          </p>
+          <p>
+            <strong>Date:</strong> {receiptLoan.paidAt}
+          </p>
         </div>
-      )}
+      </div>
+
+      <button
+        onClick={() => setReceiptLoan(null)}
+        className="mt-6 w-full btn btn-neutral"
+      >
+        Close
+      </button>
+    </div>
+  </div>
+)}
+
     </div>
   );
 }
