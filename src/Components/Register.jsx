@@ -56,7 +56,7 @@ function Register() {
     };
 
     try {
-      const url = "http://localhost:3000/users";
+      const url = "https://loanlink-nine.vercel.app/users";
       const response = await axios.post(url, fullSubmission);
       console.log("Registration successful! User Data:", response.data);
     } catch (backendError) {
@@ -108,7 +108,7 @@ function Register() {
       const fullSubmission = { ...data, roleStatus: 'Pending',};
       
 
-      const url = 'http://localhost:3000/users';
+      const url = 'https://loanlink-nine.vercel.app/users';
       const response = await axios.post(url, fullSubmission);
       console.log("Registration successful! User Data:", data);
       reset(); 

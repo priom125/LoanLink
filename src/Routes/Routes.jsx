@@ -51,7 +51,7 @@ const router = createBrowserRouter([
         index: true,
         element: <Home />,
         loader: async () => {
-          return fetch("http://localhost:3000/loan-category");
+          return fetch("https://loanlink-nine.vercel.app/loan-category");
         },
         hydrateFallbackElement: <Loading />,
       },
@@ -59,7 +59,7 @@ const router = createBrowserRouter([
         path: "/all-loans",
         element: <AllLoans />,
         loader: async () => {
-          return fetch("http://localhost:3000/all-loan-category");
+          return fetch("https://loanlink-nine.vercel.app/all-loan-category");
         },
         hydrateFallbackElement: <Loading />,
       },
@@ -71,7 +71,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         loader: async ({ params }) => {
-          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          const res = await fetch(`https://loanlink-nine.vercel.app/loan/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
@@ -105,7 +105,7 @@ const router = createBrowserRouter([
           </ProtectedRoute>
         ),
         loader: async ({ params }) => {
-          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          const res = await fetch(`https://loanlink-nine.vercel.app/loan/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
@@ -228,7 +228,7 @@ const router = createBrowserRouter([
           </AdminProtectedRoutes>
         ),
         loader: async ({ params }) => {
-          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          const res = await fetch(`https://loanlink-nine.vercel.app/loan/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
@@ -250,7 +250,7 @@ const router = createBrowserRouter([
           </ManagerProtectedRoutes>
         ),
         loader: async ({ params }) => {
-          const res = await fetch(`http://localhost:3000/loan/${params.id}`);
+          const res = await fetch(`https://loanlink-nine.vercel.app/loan/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,
@@ -263,7 +263,7 @@ const router = createBrowserRouter([
           </AdminProtectedRoutes>
         ),
         loader: async ({ params }) => {
-          const res = await fetch(`http://localhost:3000/user/${params.id}`);
+          const res = await fetch(`https://loanlink-nine.vercel.app/user/${params.id}`);
           return res.json();
         },
         hydrateFallbackElement: <Loading />,

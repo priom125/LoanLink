@@ -37,7 +37,7 @@ const AddUserByAdmin = () => {
     setIsError(false);
     console.log('Attempting to add user:', data);
 
-    const url = 'http://localhost:3000/users';
+    const url = 'https://loanlink-nine.vercel.app/users';
     const fullSubmission = {
       name: `${data.firstName} ${data.lastName}`,
       firstName: data.firstName,

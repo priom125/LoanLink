@@ -46,7 +46,7 @@ function ApplyLoanForm() {
         submissionDate: new Date().toISOString()
       };
 
-      const url = 'http://localhost:3000/add-loan';
+      const url = 'https://loanlink-nine.vercel.app/add-loan';
       const response = await axiosInstance.post(url, fullSubmission);
 
       // adjust success condition depending on your API response shape
