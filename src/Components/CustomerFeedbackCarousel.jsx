@@ -1,109 +1,115 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useState } from 'react';
+import { Users, TrendingUp, ShieldCheck, Star, ArrowUpRight, ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
-function CustomerFeedbackCarousel() {
-    const [activeIndex, setActiveIndex] = useState(0);
-   const mockTestimonials = [
+/**
+ * CustomerFeedbackCarousel Component
+ * Displays partner testimonials in a responsive, glassmorphic carousel.
+ * Refactored to use semantic theme colors and Lucide icons.
+ */
+const CustomerFeedbackCarousel = () => {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const mockTestimonials = [
     {
-        id: 1,
-        quote: "LoanLink cut our application processing time by 60%. The centralized dashboard is a game-changer for our small team. Highly recommended for any microfinance operation.",
-        name: "Aisha R.",
-        title: "CEO, Community Development Fund",
+      id: 1,
+      quote: "LoanLink cut our application processing time by 60%. The centralized dashboard is a game-changer for our small team. Highly recommended for any microfinance operation.",
+      name: "Aisha R.",
+      title: "CEO, Community Development Fund",
     },
     {
-        id: 2,
-        quote: "Before LoanLink, managing EMI payments was a nightmare of spreadsheets. Now, everything is automated and transparent. It allowed us to focus more on outreach.",
-        name: "Ben T.",
-        title: "Operations Manager, Global Microloan Initiative",
+      id: 2,
+      quote: "Before LoanLink, managing EMI payments was a nightmare of spreadsheets. Now, everything is automated and transparent. It allowed us to focus more on outreach.",
+      name: "Ben T.",
+      title: "Operations Manager, Global Microloan Initiative",
     },
     {
-        id: 3,
-        quote: "The verification flow is so smooth. The compliance checks saved us immense time and reduced errors compared to our previous paper-based system. A huge leap forward.",
-        name: "Dr. Chen L.",
-        title: "Director, Educational Finance NGO",
+      id: 3,
+      quote: "The verification flow is so smooth. The compliance checks saved us immense time and reduced errors compared to our previous paper-based system. A huge leap forward.",
+      name: "Dr. Chen L.",
+      title: "Director, Educational Finance NGO",
     },
-];
-    const [testimonials] = useState(mockTestimonials);
+  ];
 
-    const currentTestimonial = testimonials[activeIndex];
-    const goToPrev = useCallback(() => {
-        setActiveIndex((prevIndex) =>
-            prevIndex === 0 ? testimonials.length - 1 : prevIndex - 1
-        );
-    }, [testimonials.length]);
+  const goToPrev = useCallback(() => {
+    setActiveIndex((prev) => (prev === 0 ? mockTestimonials.length - 1 : prev - 1));
+  }, [mockTestimonials.length]);
 
-    const goToNext = useCallback(() => {
-        setActiveIndex((prevIndex) =>
-            prevIndex === testimonials.length - 1 ? 0 : prevIndex + 1
-        );
-    }, [testimonials.length]);
+  const goToNext = useCallback(() => {
+    setActiveIndex((prev) => (prev === mockTestimonials.length - 1 ? 0 : prev + 1));
+  }, [mockTestimonials.length]);
+
+  const current = mockTestimonials[activeIndex];
 
   return (
-    <section className="w-full max-w-4xl py-16 mx-auto px-4 sm:px-6 lg:px-8 ">
-            <h2 className="text-4xl font-extrabold text-base-content text-center mb-12">
-                What Our Customers Say
-            </h2>
+    <div className="mt-32 w-full max-w-4xl mx-auto px-4 relative group/carousel">
+      <div className="text-center mb-10">
+        <h2 className="text-3xl md:text-4xl font-black text-base-content tracking-tight">
+          What Our <span className="text-primary">Partners</span> Say
+        </h2>
+      </div>
 
-            <div className="relative bg-gray-900 border border-gray-800 rounded-2xl p-8 sm:p-12 shadow-2xl shadow-black/50">
-                
-                {/* Carousel Content */}
-                <div key={currentTestimonial.id} className="text-center transition duration-700 ease-in-out">
-                    
-                    {/* Quote Icon */}
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-green-500 mx-auto mb-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.228 9c0-2.484 1.487-4.48 4.09-4.908l.758-.108a.7.7 0 01.764.577.7.7 0 01-.58.76l-.758.108c-1.898.324-3.08 1.57-3.08 3.553V10h1.5a.5.5 0 01.5.5v2a.5.5 0 01-.5.5H8.5a.5.5 0 01-.5-.5v-3a.5.5 0 01.5-.5z" />
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.228 9c0-2.484 1.487-4.48 4.09-4.908l.758-.108a.7.7 0 01.764.577.7.7 0 01-.58.76l-.758.108c-1.898.324-3.08 1.57-3.08 3.553V10h1.5a.5.5 0 01.5.5v2a.5.5 0 01-.5.5H15.5a.5.5 0 01-.5-.5v-3a.5.5 0 01.5-.5z" />
-                    </svg>
+      <div className="relative bg-base-100/50 backdrop-blur-xl border border-base-300 rounded-[2.5rem] p-8 sm:p-14 shadow-2xl transition-all duration-300 overflow-hidden">
+        {/* Decorative Background Accent */}
+        <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-3xl rounded-full -mr-24 -mt-24 pointer-events-none" />
+        
+        <div key={current.id} className="text-center animate-in fade-in slide-in-from-bottom-4 duration-500 relative z-10">
+          <Quote className="h-10 w-10 text-primary mx-auto mb-8 opacity-40" />
 
-                    <p className="text-2xl italic text-gray-200 leading-relaxed mb-6">
-                        "{currentTestimonial.quote}"
-                    </p>
-                    
-                    <div className="border-t border-gray-800 pt-4">
-                        <p className="text-lg font-bold text-white">
-                            {currentTestimonial.name}
-                        </p>
-                        <p className="text-sm text-blue-400">
-                            {currentTestimonial.title}
-                        </p>
-                    </div>
-                </div>
+          <p className="text-xl md:text-2xl italic text-base-content leading-relaxed mb-10 font-medium">
+            "{current.quote}"
+          </p>
+          
+          <div className="pt-8 border-t border-base-300/50 inline-block px-10">
+            <p className="text-lg font-bold text-base-content">
+              {current.name}
+            </p>
+            <p className="text-xs font-black text-primary uppercase tracking-[0.2em] mt-1">
+              {current.title}
+            </p>
+          </div>
+        </div>
 
-                {/* Navigation Buttons */}
-                <button 
-                    onClick={goToPrev} 
-                    className="absolute left-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-gray-700/50 text-white hover:bg-gray-700 transition duration-200 z-10 focus:outline-none focus:ring-4 ring-blue-500/50"
-                    aria-label="Previous testimonial"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
-                    </svg>
-                </button>
-                <button 
-                    onClick={goToNext} 
-                    className="absolute right-4 top-1/2 transform -translate-y-1/2 p-3 rounded-full bg-gray-700/50 text-white hover:bg-gray-700 transition duration-200 z-10 focus:outline-none focus:ring-4 ring-blue-500/50"
-                    aria-label="Next testimonial"
-                >
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
-                </button>
+        {/* Navigation - Floating Arrows for Desktop */}
+        <div className="absolute inset-y-0 left-0 right-0 flex items-center justify-between px-4 pointer-events-none">
+          <button 
+            onClick={goToPrev} 
+            className="p-3 rounded-full bg-base-200 text-base-content hover:bg-primary hover:text-white transition-all duration-200 pointer-events-auto shadow-lg sm:-translate-x-6 opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
+            aria-label="Previous testimonial"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </button>
+          <button 
+            onClick={goToNext} 
+            className="p-3 rounded-full bg-base-200 text-base-content hover:bg-primary hover:text-white transition-all duration-200 pointer-events-auto shadow-lg sm:translate-x-6 opacity-0 group-hover/carousel:opacity-100 hidden sm:flex"
+            aria-label="Next testimonial"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </button>
+        </div>
 
-                {/* Dots Indicator */}
-                <div className="flex justify-center space-x-2 mt-8">
-                    {testimonials.map((_, index) => (
-                        <button
-                            key={index}
-                            onClick={() => setActiveIndex(index)}
-                            className={`h-2 w-2 rounded-full transition-all duration-300 ${
-                                index === activeIndex ? 'bg-green-500 w-4' : 'bg-gray-600'
-                            }`}
-                            aria-label={`Go to slide ${index + 1}`}
-                        />
-                    ))}
-                </div>
-            </div>
-        </section>
-  )
-}
+        {/* Mobile Navigation Controls */}
+        <div className="flex sm:hidden justify-center gap-6 mt-10">
+            <button onClick={goToPrev} className="btn btn-circle btn-sm btn-ghost border-base-300">
+                <ChevronLeft className="h-4 w-4"/>
+            </button>
+            <button onClick={goToNext} className="btn btn-circle btn-sm btn-ghost border-base-300">
+                <ChevronRight className="h-4 w-4"/>
+            </button>
+        </div>
 
-export default CustomerFeedbackCarousel
+        {/* Dots Progress Indicator */}
+        <div className="flex justify-center space-x-2 mt-12">
+          {mockTestimonials.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setActiveIndex(index)}
+              className={`h-1.5 rounded-full transition-all duration-500 ${
+                index === activeIndex ? 'bg-primary w-10' : 'bg-base-300 w-2 hover:bg-primary/50'
+              }`}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+export default CustomerFeedbackCarousel;
