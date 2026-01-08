@@ -14,7 +14,7 @@ import Loading from "../Pages/Loading";
 import DashBoard from "../Pages/DashBoard";
 import ViewDetailsPage from "../Pages/ViewDetailsPage";
 import ProtectedRoute from "./ProtectedRoutes";
-import DashboardLauout from "../Layouts/DashboardLauout";
+import DashboardLayout from "../Layouts/DashboardLauout";
 import DasbaordSideBar from "../Components/DasbaordSideBar";
 import MyLoanByUser from "../Pages/MyLoanByUser";
 import UserProfile from "../Pages/UserProfile";

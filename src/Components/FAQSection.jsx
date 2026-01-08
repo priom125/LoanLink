@@ -13,7 +13,7 @@ const toggleFAQ = (index) => {
 };
 
   return (
-    <section className="w-full max-w-7xl mx-auto py-12">
+    <section className="w-full max-w-7xl mx-auto py-12 ">
             <h2 className="text-4xl font-extrabold text-base-content text-center mb-12">
                 Frequently Asked Questions
             </h2>

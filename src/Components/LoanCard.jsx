@@ -1,42 +1,106 @@
-import React from 'react'
-import { NavLink } from 'react-router'
+import React from 'react';
+import { NavLink } from 'react-router';
+import { DollarSign, TrendingUp, ArrowRight } from 'lucide-react';
 
 function LoanCard({ loanCategories }) {
-  const loan = loanCategories || {}
+  const loan = loanCategories || {};
+
+  // Format currency
+  const formatCurrency = (amount) => {
+    if (!amount) return 'N/A';
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(amount);
+  };
+
+  // Truncate description
+  const truncateText = (text, maxLength = 80) => {
+    if (!text) return 'No description available';
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+  };
 
   return (
-    <div className="bg-gray-900 border border-gray-800 shadow-2xl shadow-black/50 rounded-xl overflow-hidden transition-all duration-300 hover:shadow-green-500/20 transform hover:scale-[1.01]">
-      <div className="h-40 overflow-hidden">
+    <article className="card bg-base-100 shadow-lg border border-base-300 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 group h-full flex flex-col">
+      {/* Image Container - Fixed Height */}
+      <figure className="relative h-48 overflow-hidden">
         <img
-          src={loan.display_url || '/placeholder.png'}
+          src={loan.display_url || 'https://placehold.co/600x400/1a1a1a/ffffff?text=Loan+Image'}
           alt={loan.loanTitle || 'Loan image'}
-          className="w-full h-full object-cover transform transition duration-500 hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          onError={(e) => {
+            e.target.src = 'https://placehold.co/600x400/1a1a1a/ffffff?text=No+Image';
+          }}
         />
-      </div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-base-300/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+        
+        {/* Badge */}
+        <div className="absolute top-3 right-3">
+          <span className="badge badge-primary badge-lg shadow-lg font-semibold">
+            Featured
+          </span>
+        </div>
+      </figure>
 
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-white mb-2">
+      {/* Card Body - Flex Grow */}
+      <div className="card-body p-5 flex flex-col flex-grow">
+        {/* Title */}
+        <h2 className="card-title text-xl font-bold text-base-content line-clamp-2 mb-2 group-hover:text-primary transition-colors">
           {loan.loanTitle || 'Untitled Loan'}
         </h2>
 
-        <p className="text-sm text-gray-400 mb-4 h-12 overflow-hidden">
-          {loan.description || ''}
+        {/* Description */}
+        <p className="text-sm text-base-content/70 leading-relaxed flex-grow mb-4 line-clamp-3">
+          {truncateText(loan.description)}
         </p>
 
-        <div className="flex items-center justify-between bg-gray-800 p-3 rounded-lg mb-6">
-          <span className="text-sm font-medium text-gray-400">
-            Max Loan Limit: {loan.maxLoanLimit ?? 'N/A'}
-          </span>
+        {/* Loan Details Card */}
+        <div className="bg-base-200 rounded-lg p-4 mb-4 border border-base-300">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <DollarSign className="w-5 h-5 text-accent" />
+              <span className="text-xs font-medium text-base-content/60">
+                Max Loan Amount
+              </span>
+            </div>
+            <div className="flex items-center gap-1">
+              <span className="text-lg font-bold text-primary">
+                {formatCurrency(loan.maxLoanLimit)}
+              </span>
+            </div>
+          </div>
+
+          {/* Additional Info Row */}
+          {loan.interestRate && (
+            <div className="flex items-center justify-between mt-3 pt-3 border-t border-base-300">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-secondary" />
+                <span className="text-xs font-medium text-base-content/60">
+                  Interest Rate
+                </span>
+              </div>
+              <span className="text-sm font-semibold text-secondary">
+                {loan.interestRate}%
+              </span>
+            </div>
+          )}
         </div>
 
-        <NavLink to={`/loan-details/${loan._id}`}>
-          <button className="w-full cursor-pointer inline-flex items-center justify-center px-4 py-3 border border-transparent text-base font-semibold rounded-lg shadow-lg text-gray-900 bg-green-500 hover:bg-green-600 transition duration-300 focus:outline-none focus:ring-4 focus:ring-green-400 active:bg-green-700">
-            View Details
-          </button>
-        </NavLink>
+        {/* CTA Button */}
+        <div className="card-actions mt-auto">
+          <NavLink to={`/loan-details/${loan._id}`} className="w-full">
+            <button className="btn btn-primary w-full shadow-md hover:shadow-lg transition-all duration-300 group/btn">
+              <span>View Details</span>
+              <ArrowRight className="w-4 h-4 ml-2 transform group-hover/btn:translate-x-1 transition-transform" />
+            </button>
+          </NavLink>
+        </div>
       </div>
-    </div>
-  )
+    </article>
+  );
 }
 
-export default LoanCard
+export default LoanCard;

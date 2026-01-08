@@ -1,58 +1,176 @@
 import React from "react";
-
 import { NavLink } from "react-router";
-import { Facebook, Linkedin, X } from "lucide-react";
+import { Facebook, Linkedin, X, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
+  const currentYear = new Date().getFullYear();
+
+  const quickLinks = [
+    { to: "/", label: "Home" },
+    { to: "/all-loans", label: "All Loans" },
+    { to: "/about-us", label: "About Us" },
+    { to: "/contact", label: "Contact" },
+  ];
+
+  const socialLinks = [
+    {
+      name: "Facebook",
+      url: "https://facebook.com",
+      icon: <Facebook className="w-5 h-5" />,
+      hoverColor: "hover:text-blue-500",
+    },
+    {
+      name: "Twitter",
+      url: "https://twitter.com",
+      icon: <X className="w-5 h-5" />,
+      hoverColor: "hover:text-sky-400",
+    },
+    {
+      name: "LinkedIn",
+      url: "https://linkedin.com",
+      icon: <Linkedin className="w-5 h-5" />,
+      hoverColor: "hover:text-blue-600",
+    },
+  ];
+
+  const contactInfo = [
+    {
+      icon: <Mail className="w-4 h-4" />,
+      label: "Email",
+      value: "priom6046@gmail.com",
+      href: "mailto:priom6046@gmail.com",
+    },
+    {
+      icon: <Phone className="w-4 h-4" />,
+      label: "Phone",
+      value: "+880 1613-347903",
+      href: "tel:+8801613347903",
+    },
+    {
+      icon: <MapPin className="w-4 h-4" />,
+      label: "Location",
+      value: "Dhaka, Bangladesh",
+      href: null,
+    },
+  ];
+
   return (
-    <footer className="bg-[#04050a] text-gray-300 py-10">
-      <div className="max-w-7xl mx-auto px-6 md:px-10">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-       
-          <div className="flex flex-col items-start">
-      
-            <h2 className="text-xl font-semibold text-white">LoanLink</h2>
-            <p className="text-sm text-gray-400 mt-2">
-             LoanLink is a web-based management system designed to streamline the entire microloan lifecycle for small financial organizations, NGOs, and microloan providers.
+    <footer className="bg-base-300 border-t border-base-content/10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {/* COMPANY INFO */}
+          <div className="space-y-4">
+            <NavLink to="/" className="inline-block">
+              <h2 className="text-2xl font-bold">
+                Loan<span className="text-accent">Link</span>
+              </h2>
+            </NavLink>
+            <p className="text-sm text-base-content/70 leading-relaxed">
+              A comprehensive web-based management system designed to streamline
+              the entire microloan lifecycle for small financial organizations,
+              NGOs, and microloan providers.
             </p>
           </div>
 
-        
-          <div>
-            <h3 className="text-white font-semibold mb-4">Quick Links</h3>
+          {/* QUICK LINKS */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-base-content">
+              Quick Links
+            </h3>
             <ul className="space-y-2">
-              <li><NavLink to="/" className="hover:text-white">Home</NavLink></li>
-              <li><NavLink to="/all-loans" className="hover:text-white">All-Loans</NavLink></li>
-              <li><NavLink to="/about-us" className="hover:text-white">About Us</NavLink></li>
-              <li><NavLink to="/contact" className="hover:text-white">Contact</NavLink></li>
+              {quickLinks.map((link) => (
+                <li key={link.to}>
+                  <NavLink
+                    to={link.to}
+                    className={({ isActive }) =>
+                      `inline-block text-sm transition-colors ${
+                        isActive
+                          ? "text-accent font-medium"
+                          : "text-base-content/70 hover:text-accent hover:translate-x-1 transform transition-transform"
+                      }`
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                </li>
+              ))}
             </ul>
           </div>
 
-      
-          <div>
-            <h3 className="text-white font-semibold mb-4">Contact</h3>
-            <ul className="space-y-2 text-sm">
-              <li>Email: priom6046@gmail.com</li>
-              <li>Phone: 01613347903</li>
-              
+          {/* CONTACT INFO */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-base-content">
+              Get In Touch
+            </h3>
+            <ul className="space-y-3">
+              {contactInfo.map((item, index) => (
+                <li key={index} className="flex items-start gap-3">
+                  <span className="text-accent mt-0.5">{item.icon}</span>
+                  <div className="flex-1">
+                    {item.href ? (
+                      <a
+                        href={item.href}
+                        className="text-sm text-base-content/70 hover:text-accent transition-colors block"
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      <span className="text-sm text-base-content/70 block">
+                        {item.value}
+                      </span>
+                    )}
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
 
-       
-          <div>
-            <h3 className="text-white font-semibold mb-4">Follow Us</h3>
-            <div className="flex space-x-4">
-              <NavLink to="#" className="hover:text-blue-500"> <Facebook /></NavLink>
-              <NavLink to="#" className="hover:text-sky-400"><X /></NavLink>
-              <NavLink to="#" className="hover:text-pink-500"><Linkedin /></NavLink>
-           
+          {/* SOCIAL LINKS */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-base-content">
+              Follow Us
+            </h3>
+            <p className="text-sm text-base-content/70">
+              Stay connected with us on social media for updates and news.
+            </p>
+            <div className="flex gap-3">
+              {socialLinks.map((social) => (
+                <a
+                  key={social.name}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`btn btn-circle btn-sm bg-base-100 border-base-content/20 hover:border-transparent ${social.hoverColor} transition-all duration-300 hover:scale-110`}
+                  aria-label={social.name}
+                >
+                  {social.icon}
+                </a>
+              ))}
             </div>
           </div>
         </div>
 
-    
-        <div className="border-t border-gray-700 mt-8 pt-6 text-center text-sm text-gray-500">
-          <p>© 2025 LocalEats All rights reserved.</p>
+        {/* BOTTOM BAR */}
+        <div className="border-t border-base-content/10 mt-10 pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-sm text-base-content/60 text-center sm:text-left">
+              © {currentYear} LoanLink. All rights reserved.
+            </p>
+            <div className="flex gap-6 text-sm">
+              <NavLink
+                to="/privacy-policy"
+                className="text-base-content/60 hover:text-accent transition-colors"
+              >
+                Privacy Policy
+              </NavLink>
+              <NavLink
+                to="/terms-of-service"
+                className="text-base-content/60 hover:text-accent transition-colors"
+              >
+                Terms of Service
+              </NavLink>
+            </div>
+          </div>
         </div>
       </div>
     </footer>
