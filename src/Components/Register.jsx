@@ -1,438 +1,411 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import axios from 'axios';
+import { NavLink, useNavigate } from "react-router";
 import {
   UserPlus,
-  User,
-  AtSign,
+  Mail,
   Lock,
   AlertTriangle,
-  Image,
-  Briefcase,
+  Eye,
+  EyeOff,
+  Loader2,
+  CheckCircle,
+  User,
+  Image as ImageIcon,
 } from "lucide-react";
-import { NavLink, useLocation, useNavigate } from "react-router";
 import { AuthContext } from "../Auth/AuthProvider";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 function Register() {
   const {
     register,
     handleSubmit,
     formState: { errors },
+    watch,
     reset,
   } = useForm();
 
-  const { createUser, googleLogin } = useContext(AuthContext);
+  const { createUser, updateUserProfile, googleLogin } = useContext(AuthContext);
 
-  const [submissionStatus, setSubmissionStatus] = useState(null); // 'success', 'error', or null
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-    const navigate = useNavigate();
-  const location = useLocation();
+  const [googleLoading, setGoogleLoading] = useState(false);
+  const navigate = useNavigate();
 
+  const password = watch("password");
 
-
-  // Helper component for displaying form errors
-  const ErrorMessage = ({ message }) => (
-    <p className="flex items-center mt-1 text-sm text-red-400 font-medium">
-      <AlertTriangle className="w-4 h-4 mr-1 flex-shrink-0" />
-      {message}
-    </p>
-  );
-
-  const handleGoogleLogin = async () => {
-  setLoading(true);
-  try {
-    const result = await googleLogin();
-    const user = result.user;
-    console.log("Google user:", user);
-
-    // Send user to backend (create or upsert)
-    const fullSubmission = {
-      name: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      role: "borrower",
-      roleStatus: "Pending",
-    };
-
+  const handleGoogleSignup = async () => {
+    setGoogleLoading(true);
     try {
-      const url = "https://loanlink-nine.vercel.app/users";
-      const response = await axios.post(url, fullSubmission);
-      console.log("Registration successful! User Data:", response.data);
-    } catch (backendError) {
-      
-      if (backendError.response?.status === 409) {
-        console.log("User already exists, proceeding with login");
-      } else {
-       
-        throw backendError;
+      const result = await googleLogin();
+      const user = result.user;
+
+      const fullSubmission = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "borrower",
+        roleStatus: "Pending",
+      };
+
+      try {
+        const url = "https://loanlink-nine.vercel.app/users";
+        await axios.post(url, fullSubmission);
+        toast.success("Account created successfully!");
+      } catch (backendError) {
+        if (backendError.response?.status === 409) {
+          toast.info("Account already exists. Logging you in...");
+        } else {
+          throw backendError;
+        }
       }
+
+      setTimeout(() => {
+        navigate("/");
+      }, 100);
+    } catch (error) {
+      console.error("Google signup error:", error);
+      const errorMessage =
+        error.response?.data?.message || error.message || "Registration failed. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setGoogleLoading(false);
     }
-
-   
-    toast.success("Login successful!");
-    
-
-    setTimeout(() => {
-      const from = location.state?.from || "/";
-      navigate(from);
-    }, 100);
-    
-  } catch (error) {
-    console.error("Google login error:", error);
-    
-   
-    const errorMessage = 
-      error.response?.data?.message || 
-      error.message || 
-      "Login Failed. Please try again.";
-    
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleRegister = async (data) => {
     setLoading(true);
-    setSubmissionStatus(null);
-    console.log("Attempting registration for:", data.email);
 
     try {
-      const userCredential = await createUser(data.email, data.password);
-      if (userCredential) {
-        const user = userCredential.user;
-        console.log("User created:", user);
-      }
-      setSubmissionStatus("success");
-      const fullSubmission = { ...data, roleStatus: 'Pending',};
-      
+      // Create user with Firebase
+      const result = await createUser(data.email, data.password);
+      const user = result.user;
 
-      const url = 'https://loanlink-nine.vercel.app/users';
-      const response = await axios.post(url, fullSubmission);
-      console.log("Registration successful! User Data:", data);
-      reset(); 
-      const from = location.state?.from || '/';
-        navigate(from);
+      // Update profile with name and photo
+      await updateUserProfile(data.name, data.photoURL || null);
+
+      // Save to backend
+      const fullSubmission = {
+        name: data.name,
+        email: data.email,
+        photoURL: data.photoURL || null,
+        role: "borrower",
+        roleStatus: "Pending",
+      };
+
+      const url = "https://loanlink-nine.vercel.app/users";
+      await axios.post(url, fullSubmission);
+
+      toast.success("Account created successfully!");
+      reset();
+      navigate("/login");
     } catch (error) {
-      console.error("Registration failed:", error.message);
-      // In a real scenario, this would handle server-side errors (e.g., email already exists)
-      setSubmissionStatus("error");
-       toast.error("Login Failed. Please try again.");
+      console.error("Registration failed:", error);
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Registration failed. Please try again.";
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
+
   return (
-    <div className="min-h-screen  flex items-center justify-center p-4">
-      {/* Dark theme card container */}
-      <div className="w-full max-w-md bg-gray-800 p-8 md:p-10 rounded-xl shadow-2xl border border-gray-700 transform transition-all duration-300 hover:shadow-3xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          {/* Icon color uses indigo-500 base */}
-          <UserPlus className="w-10 h-10 mx-auto text-indigo-500" />
-          <h2 className="mt-4 text-3xl font-extrabold text-white">
-            Create Your Account
-          </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Join us today! Fill out the form below.
-          </p>
-        </div>
-
-        {/* Submission Status Message (Simulated Toast/Sweet Alert) */}
-        {submissionStatus === "success" && (
-          <div
-            className="mb-6 p-4 bg-green-900/40 border-l-4 border-green-500 text-green-300 rounded-lg animate-pulse"
-            role="alert"
-          >
-            <p className="font-bold">Registration Successful!</p>
-            <p>Welcome! Your account has been created.</p>
-          </div>
-        )}
-        {submissionStatus === "error" && (
-          <div
-            className="mb-6 p-4 bg-red-900/40 border-l-4 border-red-500 text-red-300 rounded-lg"
-            role="alert"
-          >
-            <p className="font-bold">Registration Failed</p>
-            <p>An error occurred during registration. Please try again.</p>
-          </div>
-        )}
-
-        <button
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-700 hover:bg-gray-700/80 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4"
-        >
-          <svg
-            aria-label="Google logo"
-            width="16"
-            height="16"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            className="w-4 h-4"
-          >
-            <g>
-              <path d="m0 0H512V512H0" fill="#fff"></path>
-              <path
-                fill="#34a853"
-                d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-              ></path>
-              <path
-                fill="#4285f4"
-                d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-              ></path>
-              <path
-                fill="#fbbc02"
-                d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
-              ></path>
-              <path
-                fill="#ea4335"
-                d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-              ></path>
-            </g>
-          </svg>
-
-          <span>Sign in with Google</span>
-        </button>
-
-        {/* OR Divider - Dark Theme adjustments */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-700"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-800 text-gray-400">
-              Or continue with
-            </span>
+    <div className="min-h-screen flex items-center justify-center p-4 py-12">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header Card */}
+        <div className="card bg-gradient-to-br from-secondary to-secondary/80 text-secondary-content shadow-xl">
+          <div className="card-body text-center py-8">
+            <div className="flex justify-center mb-4">
+              <div className="bg-secondary-content/20 p-4 rounded-full">
+                <UserPlus className="w-10 h-10" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-extrabold">Create Account</h1>
+            <p className="opacity-90">Join LoanLink today</p>
           </div>
         </div>
 
-        {/* Registration Form */}
-        <form onSubmit={handleSubmit(handleRegister)} className="space-y-6">
-          {/* Name Input Group */}
-          <div>
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Full Name
-            </label>
-            <div className="relative">
-              <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="name"
-                name="name"
-                type="text"
-                disabled={loading}
-                {...register("name", { required: "Name is required" })}
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.name
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="Priom Sheikh"
-              />
-            </div>
-            {errors.name && <ErrorMessage message={errors.name.message} />}
-          </div>
-
-          {/* Email Input Group */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Email address
-            </label>
-            <div className="relative">
-              <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                disabled={loading}
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.email
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="you@example.com"
-              />
-            </div>
-            {errors.email && <ErrorMessage message={errors.email.message} />}
-          </div>
-
-          {/* PhotoURL Input Group */}
-          <div>
-            <label
-              htmlFor="photoURL"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Profile Picture URL (Optional)
-            </label>
-            <div className="relative">
-              <Image className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="photoURL"
-                name="photoURL"
-                type="url"
-                disabled={loading}
-                {...register("photoURL")}
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.photoURL
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="http://example.com/photo.jpg"
-              />
-            </div>
-            {errors.photoURL && (
-              <ErrorMessage message={errors.photoURL.message} />
-            )}
-          </div>
-
-          {/* Role Dropdown */}
-          <div>
-            <label
-              htmlFor="role"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Role
-            </label>
-            <div className="relative">
-              <Briefcase className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <select
-                id="role"
-                name="role"
-                disabled={loading}
-                {...register("role", { required: "Role is required" })}
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.role
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-              >
-                <option value="" disabled className="text-gray-500 bg-gray-800">
-                  Select your role
-                </option>
-                <option value="borrower" className="bg-gray-800 text-white">
-                  Borrower
-                </option>
-                <option value="manager" className="bg-gray-800 text-white">
-                  Manager
-                </option>
-              </select>
-            </div>
-            {errors.role && <ErrorMessage message={errors.role.message} />}
-          </div>
-
-          {/* Password Input Group */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="new-password"
-                disabled={loading}
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Length must be at least 6 characters.",
-                  },
-                  pattern: {
-                    // Regex to ensure at least one uppercase and one lowercase letter
-                    value: /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/,
-                    message:
-                      "Password must contain at least one uppercase letter and one lowercase letter.",
-                  },
-                })}
-                // Input Dark Theme styles
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.password
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="••••••••"
-              />
-            </div>
-            {/* Custom error message for validation rules */}
-            {errors.password && (
-              <ErrorMessage message={errors.password.message} />
-            )}
-          </div>
-
-          {/* Action Button */}
-          <div>
+        {/* Main Form Card */}
+        <div className="card bg-base-100 shadow-xl border border-base-300">
+          <div className="card-body p-6 sm:p-8">
+            {/* Google Signup */}
             <button
-              type="submit"
-              disabled={loading}
-              // Button color uses indigo-500 base
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white transition duration-200 ease-in-out 
-                                ${
-                                  loading
-                                    ? "bg-indigo-400 cursor-not-allowed"
-                                    : "bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700"
-                                }`}
+              onClick={handleGoogleSignup}
+              disabled={googleLoading || loading}
+              className="btn btn-outline w-full gap-2 hover:btn-secondary transition-all"
+              type="button"
             >
-              {loading ? (
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
+              {googleLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <>
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  Register
-                </>
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
               )}
+              Sign up with Google
             </button>
-          </div>
-        </form>
 
-        {/* Footer/Links: Link to Login page */}
-        <div className="mt-6 text-center text-sm">
-          <p className="text-gray-400">
-            Already have an account?{" "}
-            <NavLink
-              to="/login"
-              className="font-medium text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out"
-            >
-              Log In
-            </NavLink>
+            {/* Divider */}
+            <div className="divider">OR</div>
+
+            {/* Registration Form */}
+            <div className="space-y-4">
+              {/* Name Field */}
+              <div className="form-control">
+                <label htmlFor="name" className="label">
+                  <span className="label-text font-medium">Full Name</span>
+                </label>
+                <div className="relative">
+                  <User className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="name"
+                    type="text"
+                    autoComplete="name"
+                    disabled={loading || googleLoading}
+                    {...register("name", {
+                      required: "Name is required",
+                      minLength: {
+                        value: 2,
+                        message: "Name must be at least 2 characters",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 ${
+                      errors.name ? "input-error" : ""
+                    }`}
+                    placeholder="John Doe"
+                  />
+                </div>
+                {errors.name && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.name.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Email Field */}
+              <div className="form-control">
+                <label htmlFor="email" className="label">
+                  <span className="label-text font-medium">Email Address</span>
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    disabled={loading || googleLoading}
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 ${
+                      errors.email ? "input-error" : ""
+                    }`}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {errors.email && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.email.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Photo URL Field (Optional) */}
+              <div className="form-control">
+                <label htmlFor="photoURL" className="label">
+                  <span className="label-text font-medium">
+                    Photo URL <span className="text-base-content/50">(Optional)</span>
+                  </span>
+                </label>
+                <div className="relative">
+                  <ImageIcon className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="photoURL"
+                    type="url"
+                    disabled={loading || googleLoading}
+                    {...register("photoURL", {
+                      pattern: {
+                        value: /^https?:\/\/.+/i,
+                        message: "Invalid URL format",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 ${
+                      errors.photoURL ? "input-error" : ""
+                    }`}
+                    placeholder="https://example.com/photo.jpg"
+                  />
+                </div>
+                {errors.photoURL && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.photoURL.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="form-control">
+                <label htmlFor="password" className="label">
+                  <span className="label-text font-medium">Password</span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={loading || googleLoading}
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                      pattern: {
+                        value: /^(?=.*[A-Z])(?=.*[a-z])/,
+                        message: "Password must contain uppercase and lowercase letters",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 pr-12 ${
+                      errors.password ? "input-error" : ""
+                    }`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-base-content/50 hover:text-base-content transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.password.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Confirm Password Field */}
+              <div className="form-control">
+                <label htmlFor="confirmPassword" className="label">
+                  <span className="label-text font-medium">Confirm Password</span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    autoComplete="new-password"
+                    disabled={loading || googleLoading}
+                    {...register("confirmPassword", {
+                      required: "Please confirm your password",
+                      validate: (value) => value === password || "Passwords do not match",
+                    })}
+                    className={`input input-bordered w-full pl-10 pr-12 ${
+                      errors.confirmPassword ? "input-error" : ""
+                    }`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-base-content/50 hover:text-base-content transition-colors"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.confirmPassword && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.confirmPassword.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={handleSubmit(handleRegister)}
+                disabled={loading || googleLoading}
+                className="btn btn-secondary btn-lg w-full shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Creating Account...
+                  </>
+                ) : (
+                  <>
+                    <UserPlus className="w-5 h-5" />
+                    Create Account
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Login Link Card */}
+        <div className="card bg-base-200 shadow-md border border-base-300">
+          <div className="card-body p-4 text-center">
+            <p className="text-sm text-base-content/70">
+              Already have an account?{" "}
+              <NavLink to="/login" className="link link-secondary font-medium">
+                Sign In
+              </NavLink>
+            </p>
+          </div>
+        </div>
+
+        {/* Security Notice */}
+        <div className="text-center text-xs text-base-content/60">
+          <p className="flex items-center justify-center gap-2">
+            <CheckCircle className="w-4 h-4 text-success" />
+            Your data is protected with industry-standard encryption
           </p>
         </div>
       </div>

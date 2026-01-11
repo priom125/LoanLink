@@ -1,7 +1,18 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import { NavLink, useLocation, useNavigate } from "react-router";
-import { LogIn, AtSign, Lock, AlertTriangle, Chrome } from "lucide-react";
+import { 
+  LogIn, 
+  Mail, 
+  Lock, 
+  AlertTriangle, 
+  Eye, 
+  EyeOff, 
+  Loader2,
+  CheckCircle,
+  Chrome,
+  Zap
+} from "lucide-react";
 import { AuthContext } from "../Auth/AuthProvider";
 import { toast } from "react-toastify";
 import axios from 'axios';
@@ -11,317 +22,280 @@ function Login() {
     register,
     handleSubmit,
     formState: { errors },
-    watch,
+    setValue,
     reset,
   } = useForm();
 
   const { googleLogin, signIn } = useContext(AuthContext);
 
-  const [submissionStatus, setSubmissionStatus] = useState(null);
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
-  const ErrorMessage = ({ message }) => (
-    <p className="flex items-center mt-1 text-sm text-red-500 font-medium">
-      <AlertTriangle className="w-4 h-4 mr-1 flex-shrink-0" />
-      {message}
-    </p>
-  );
+  // Demo login handler
+  const handleDemoLogin = () => {
+    setValue("email", "demo@loanlink.com");
+    setValue("password", "demo123");
+    toast.info("Demo credentials filled! Click 'Sign In' to continue.");
+  };
 
-const handleGoogleLogin = async () => {
-  setLoading(true);
-  try {
-    const result = await googleLogin();
-    const user = result.user;
-    console.log("Google user:", user);
-
-    // Send user to backend (create or upsert)
-    const fullSubmission = {
-      name: user.displayName,
-      email: user.email,
-      photoURL: user.photoURL,
-      role: "borrower",
-      roleStatus: "Pending",
-    };
-
+  const handleGoogleLogin = async () => {
+    setGoogleLoading(true);
     try {
-      const url = "https://loanlink-nine.vercel.app/users";
-      const response = await axios.post(url, fullSubmission);
-      console.log("Registration successful! User Data:", response.data);
-    } catch (backendError) {
-      
-      if (backendError.response?.status === 409) {
-        console.log("User already exists, proceeding with login");
-      } else {
-       
-        throw backendError;
+      const result = await googleLogin();
+      const user = result.user;
+
+      const fullSubmission = {
+        name: user.displayName,
+        email: user.email,
+        photoURL: user.photoURL,
+        role: "borrower",
+        roleStatus: "Pending",
+      };
+
+      try {
+        const url = "https://loanlink-nine.vercel.app/users";
+        await axios.post(url, fullSubmission);
+      } catch (backendError) {
+        if (backendError.response?.status !== 409) {
+          throw backendError;
+        }
       }
+
+      toast.success("Login successful!");
+      
+      setTimeout(() => {
+        const from = location.state?.from || "/";
+        navigate(from);
+      }, 100);
+      
+    } catch (error) {
+      console.error("Google login error:", error);
+      const errorMessage = 
+        error.response?.data?.message || 
+        error.message || 
+        "Login Failed. Please try again.";
+      toast.error(errorMessage);
+    } finally {
+      setGoogleLoading(false);
     }
-
-   
-    toast.success("Login successful!");
-    
- 
-    setTimeout(() => {
-      const from = location.state?.from || "/";
-      navigate(from);
-    }, 100);
-    
-  } catch (error) {
-    console.error("Google login error:", error);
-    
-   
-    const errorMessage = 
-      error.response?.data?.message || 
-      error.message || 
-      "Login Failed. Please try again.";
-    
-    toast.error(errorMessage);
-  } finally {
-    setLoading(false);
-  }
-};
-
+  };
 
   const handleLogin = async (data) => {
     setLoading(true);
-    setSubmissionStatus(null);
-    console.log("Attempting login for:", data.email);
 
     try {
       await signIn(data.email, data.password);
-      console.log("Login successful for:", data.email);
-      setSubmissionStatus("success");
+      toast.success("Login successful!");
       reset();
-      // Get redirect path from location.state.from or default to '/'
       const from = location.state?.from || "/";
       navigate(from);
     } catch (error) {
       console.error("Login failed:", error.message);
-      setSubmissionStatus("error");
-        toast.error("Login Failed. Please try again.");
-
+      toast.error("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4">
-      {/* Dark theme card container */}
-      <div className="w-full max-w-md bg-gray-800 p-8 md:p-10 rounded-xl shadow-2xl border border-gray-700 transform transition-all duration-300 hover:shadow-3xl">
-        {/* Header */}
-        <div className="text-center mb-8">
-          {/* Icon color changed to base-500 (indigo-500) */}
-          <LogIn className="w-10 h-10 mx-auto text-indigo-500" />
-          <h2 className="mt-4 text-3xl font-extrabold text-white">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            Enter your credentials or use a social provider.
-          </p>
-        </div>
-
-        {/* Submission Status Message */}
-        {submissionStatus === "success" && (
-          <div
-            className="mb-6 p-4 bg-green-900/40 border-l-4 border-green-500 text-green-300 rounded-lg"
-            role="alert"
-          >
-            <p className="font-bold">Login Successful!</p>
-            <p>Welcome back! You are now signed in.</p>
-          </div>
-        )}
-        {/* Improved Error Message Display */}
-        {submissionStatus === "error" && (
-          <div
-            className="mb-6 p-4 bg-red-900/40 border-l-4 border-red-500 text-red-300 rounded-lg"
-            role="alert"
-          >
-            <p className="font-bold">Login Failed</p>
-            <p>Invalid email or password. Please check your details.</p>
-          </div>
-        )}
-
-        {/* Social Login Button (Google) - Dark Theme adjustments */}
-        <button
-          onClick={handleGoogleLogin}
-          disabled={loading}
-          className="w-full flex items-center justify-center gap-3 py-2 px-4 border border-gray-600 rounded-lg shadow-sm text-sm font-medium text-gray-200 bg-gray-700 hover:bg-gray-700/80 transition duration-150 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 mb-4"
-        >
-          <svg
-            aria-label="Google logo"
-            width="16"
-            height="16"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 512 512"
-            className="w-4 h-4"
-          >
-            <g>
-              <path d="m0 0H512V512H0" fill="#fff"></path>
-              <path
-                fill="#34a853"
-                d="M153 292c30 82 118 95 171 60h62v48A192 192 0 0190 341"
-              ></path>
-              <path
-                fill="#4285f4"
-                d="m386 400a140 175 0 0053-179H260v74h102q-7 37-38 57"
-              ></path>
-              <path
-                fill="#fbbc02"
-                d="m90 341a208 200 0 010-171l63 49q-12 37 0 73"
-              ></path>
-              <path
-                fill="#ea4335"
-                d="m153 219c22-69 116-109 179-50l55-54c-78-75-230-72-297 55"
-              ></path>
-            </g>
-          </svg>
-
-          <span>Sign in with Google</span>
-        </button>
-
-        {/* OR Divider - Dark Theme adjustments */}
-        <div className="relative mb-6">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-700"></div>
-          </div>
-          <div className="relative flex justify-center text-sm">
-            <span className="px-2 bg-gray-800 text-gray-400">
-              Or continue with
-            </span>
+    <div className="min-h-screen flex items-center justify-center p-4 py-12">
+      <div className="w-full max-w-md space-y-8">
+        {/* Header Card */}
+        <div className="card bg-gradient-to-br from-primary to-primary/80 text-primary-content shadow-xl">
+          <div className="card-body text-center py-8">
+            <div className="flex justify-center mb-4">
+              <div className="bg-primary-content/20 p-4 rounded-full">
+                <LogIn className="w-10 h-10" />
+              </div>
+            </div>
+            <h1 className="text-3xl font-extrabold">Welcome Back</h1>
+            <p className="opacity-90">Sign in to continue to LoanLink</p>
           </div>
         </div>
 
-        {/* Login Form */}
-        <form onSubmit={handleSubmit(handleLogin)} className="space-y-6">
-          {/* Email Input Group */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Email address
-            </label>
-            <div className="relative">
-              <AtSign className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                disabled={loading}
-                {...register("email", {
-                  required: "Email is required",
-                  pattern: {
-                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                    message: "Invalid email address",
-                  },
-                })}
-                // Input Dark Theme styles
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.email
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="user@example.com"
-              />
-            </div>
-            {errors.email && <ErrorMessage message={errors.email.message} />}
-          </div>
-
-          {/* Password Input Group */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-300 mb-1"
-            >
-              Password
-            </label>
-            <div className="relative">
-              <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-500" />
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                disabled={loading}
-                {...register("password", {
-                  required: "Password is required",
-                  minLength: {
-                    value: 6,
-                    message: "Password must be at least 6 characters",
-                  },
-                })}
-                // Input Dark Theme styles
-                className={`w-full pl-10 pr-4 py-2 bg-gray-700 text-white border ${
-                  errors.password
-                    ? "border-red-500 focus:ring-red-500"
-                    : "border-gray-600 focus:ring-indigo-500"
-                } rounded-lg shadow-sm placeholder-gray-500 focus:outline-none focus:border-indigo-500 transition duration-150 ease-in-out sm:text-sm`}
-                placeholder="••••••••"
-              />
-            </div>
-            {errors.password && (
-              <ErrorMessage message={errors.password.message} />
-            )}
-          </div>
-
-          {/* Action Button */}
-          <div>
+        {/* Main Form Card */}
+        <div className="card bg-base-100 shadow-xl border border-base-300">
+          <div className="card-body p-6 sm:p-8">
+            {/* Demo Login Button */}
             <button
-              type="submit"
-              disabled={loading}
-              // Button color uses indigo-500 base
-              className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-lg shadow-lg text-sm font-medium text-white transition duration-200 ease-in-out 
-                                ${
-                                  loading
-                                    ? "bg-indigo-400 cursor-not-allowed"
-                                    : "bg-indigo-500 hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 active:bg-indigo-700"
-                                }`}
+              onClick={handleDemoLogin}
+              className="btn btn-outline btn-accent w-full mb-4 gap-2"
+              type="button"
             >
-              {loading ? (
-                <svg
-                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-              ) : (
-                <>
-                  <LogIn className="w-5 h-5 mr-2" />
-                  Sign In
-                </>
-              )}
+              <Zap className="w-5 h-5" />
+              Try Demo Account
             </button>
-          </div>
-        </form>
 
-        {/* Footer/Links: Link to Register page - Dark Theme adjustments */}
-        <div className="mt-6 text-center text-sm">
-          <p className="text-gray-400">
-            Don't have an account?{" "}
-            <NavLink
-              to="/register"
-              className="font-medium text-indigo-400 hover:text-indigo-300 transition duration-150 ease-in-out"
+            {/* Google Login */}
+            <button
+              onClick={handleGoogleLogin}
+              disabled={googleLoading || loading}
+              className="btn btn-outline w-full gap-2 hover:btn-primary transition-all"
+              type="button"
             >
-              Register
-            </NavLink>
+              {googleLoading ? (
+                <Loader2 className="w-5 h-5 animate-spin" />
+              ) : (
+                <svg className="w-5 h-5" viewBox="0 0 24 24">
+                  <path
+                    fill="#4285F4"
+                    d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
+                  />
+                  <path
+                    fill="#34A853"
+                    d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
+                  />
+                  <path
+                    fill="#FBBC05"
+                    d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
+                  />
+                  <path
+                    fill="#EA4335"
+                    d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
+                  />
+                </svg>
+              )}
+              Continue with Google
+            </button>
+
+            {/* Divider */}
+            <div className="divider">OR</div>
+
+            {/* Login Form */}
+            <div className="space-y-4">
+              {/* Email Field */}
+              <div className="form-control">
+                <label htmlFor="email" className="label">
+                  <span className="label-text font-medium">Email Address</span>
+                </label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="email"
+                    type="email"
+                    autoComplete="email"
+                    disabled={loading || googleLoading}
+                    {...register("email", {
+                      required: "Email is required",
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: "Invalid email address",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 ${
+                      errors.email ? "input-error" : ""
+                    }`}
+                    placeholder="you@example.com"
+                  />
+                </div>
+                {errors.email && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.email.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Password Field */}
+              <div className="form-control">
+                <label htmlFor="password" className="label">
+                  <span className="label-text font-medium">Password</span>
+                </label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-base-content/50" />
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    autoComplete="current-password"
+                    disabled={loading || googleLoading}
+                    {...register("password", {
+                      required: "Password is required",
+                      minLength: {
+                        value: 6,
+                        message: "Password must be at least 6 characters",
+                      },
+                    })}
+                    className={`input input-bordered w-full pl-10 pr-12 ${
+                      errors.password ? "input-error" : ""
+                    }`}
+                    placeholder="••••••••"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 text-base-content/50 hover:text-base-content transition-colors"
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-5 h-5" />
+                    ) : (
+                      <Eye className="w-5 h-5" />
+                    )}
+                  </button>
+                </div>
+                {errors.password && (
+                  <label className="label">
+                    <span className="label-text-alt text-error flex items-center gap-1">
+                      <AlertTriangle className="w-3 h-3" />
+                      {errors.password.message}
+                    </span>
+                  </label>
+                )}
+              </div>
+
+              {/* Forgot Password Link */}
+              <div className="text-right">
+                <NavLink
+                  to="/forgot-password"
+                  className="link link-primary text-sm"
+                >
+                  Forgot password?
+                </NavLink>
+              </div>
+
+              {/* Submit Button */}
+              <button
+                onClick={handleSubmit(handleLogin)}
+                disabled={loading || googleLoading}
+                className="btn btn-primary btn-lg w-full shadow-lg hover:shadow-xl transition-all duration-300"
+              >
+                {loading ? (
+                  <>
+                    <Loader2 className="w-5 h-5 animate-spin" />
+                    Signing In...
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-5 h-5" />
+                    Sign In
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Register Link Card */}
+        <div className="card bg-base-200 shadow-md border border-base-300">
+          <div className="card-body p-4 text-center">
+            <p className="text-sm text-base-content/70">
+              Don't have an account?{" "}
+              <NavLink to="/register" className="link link-primary font-medium">
+                Create Account
+              </NavLink>
+            </p>
+          </div>
+        </div>
+
+        {/* Security Notice */}
+        <div className="text-center text-xs text-base-content/60">
+          <p className="flex items-center justify-center gap-2">
+            <CheckCircle className="w-4 h-4 text-success" />
+            Your connection is secure and encrypted
           </p>
         </div>
       </div>

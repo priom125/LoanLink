@@ -40,6 +40,7 @@ import PaymentDone from "../Pages/PaymentDone";
 import PaymentCancel from "../Pages/PaymentCancel";
 import UserAction from "../Pages/UserAction";
 import Error from "../Pages/Error";
+import Overview from "../Pages/Overview";
 
 const router = createBrowserRouter([
   {
@@ -240,6 +241,15 @@ const router = createBrowserRouter([
             {" "}
             <ManageLoans />
           </ManagerProtectedRoutes>
+        ),
+      },
+      {
+        path: "overview",
+        element: (
+          <AdminProtectedRoutes>
+            {" "}
+            <Overview />
+          </AdminProtectedRoutes>
         ),
       },
       {

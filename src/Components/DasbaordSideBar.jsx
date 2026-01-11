@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { NavLink, Outlet } from "react-router";
 import {
   BookCopy,
+  BookOpen,
   HandCoins,
   Handshake,
   Home,
@@ -75,6 +76,19 @@ function DasbaordSideBar() {
   );
   const adminNavItems = (
     <>
+          <li>
+        <NavLink to="/dashboard/overview">
+          <button
+            className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+            data-tip="Overview"
+          >
+            {/* Added mr-2 for spacing */}
+            <BookOpen  className="my-1.5 inline-block size-4 mr-2" />
+            <span className="is-drawer-close:hidden">Overview</span>
+          </button>
+        </NavLink>
+      </li>
+
       <li>
         <NavLink to="/dashboard/manage-users">
           <button

@@ -6,6 +6,7 @@ import HowItsWorksSection from '../Components/HowItsWorksSection';
 import CustomerFeedbackCarousel from '../Components/CustomerFeedbackCarousel';
 import TrustIndecatorSection from '../Components/TrustIndecatorSection';
 import FAQSection from '../Components/FAQSection';
+import LoanLinkHomeSections from '../Components/LoanLinkHomeSections';
 
 function Home() {
 
@@ -15,6 +16,7 @@ function Home() {
     <div className=" min-h-screen pt-5">
       <HeroSection/>
       <AllLoanCards loanCategories={loanCategories}/>
+      <LoanLinkHomeSections/>
       <HowItsWorksSection/>
       <TrustIndecatorSection/>
       <CustomerFeedbackCarousel/>

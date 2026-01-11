@@ -276,7 +276,7 @@ function UserProfile() {
       </div>
 
       {/* Quick Actions Card */}
-      <div className="card bg-base-100 shadow-lg border border-base-300">
+      {/* <div className="card bg-base-100 shadow-lg border border-base-300">
         <div className="card-body p-6">
           <h3 className="text-xl font-bold text-base-content mb-4">Quick Actions</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -288,17 +288,14 @@ function UserProfile() {
               <TrendingUp className="w-4 h-4" />
               Apply New
             </button>
-            <button className="btn btn-outline hover:btn-accent transition-all duration-300">
-              <Settings className="w-4 h-4" />
-              Settings
-            </button>
+         
             <button className="btn btn-outline hover:btn-info transition-all duration-300">
               <Mail className="w-4 h-4" />
               Support
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }
