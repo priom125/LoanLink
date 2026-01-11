@@ -122,7 +122,7 @@ function Navbar() {
                     </NavLink>
                   </li>
                   <li>
-                    <NavLink to="dashboard/my-loans" className={navLinkClass}>
+                    <NavLink to="dashboard/my-loan" className={navLinkClass}>
                       My Loans
                     </NavLink>
                   </li>
@@ -362,7 +362,7 @@ function Navbar() {
                   Dashboard
                 </NavLink>
                 <NavLink
-                  to="dashboard/my-loans"
+                  to="dashboard/my-loan"
                   className={navLinkClass}
                   onClick={closeMobileMenu}
                 >
